@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<addon addon_id="GFNNotify" title="GoodForNothing Notification" version_string="1.0.6 Update 2" version_id="1000672" url="https://gfnlabs.com/" install_callback_class="GFNNotify_Installer" install_callback_method="install" uninstall_callback_class="GFNNotify_Installer" uninstall_callback_method="uninstall">
+  <admin_navigation/>
+  <admin_permissions/>
+  <admin_style_properties/>
+  <admin_templates/>
+  <admin_template_modifications/>
+  <code_events/>
+  <code_event_listeners>
+    <listener event_id="load_class_controller" execute_order="10" callback_class="GFNNotify_Listener_LoadClass" callback_method="extend" active="1" hint="XenForo_ControllerPublic_Account" description="Extends the user account public controller..."/>
+    <listener event_id="load_class_datawriter" execute_order="10" callback_class="GFNNotify_Listener_LoadClass" callback_method="extend" active="1" hint="XenForo_DataWriter_User" description="Extends the user data writer class..."/>
+    <listener event_id="load_class_model" execute_order="10" callback_class="GFNNotify_Listener_LoadClass" callback_method="extend" active="1" hint="XenForo_Model_User" description="Extends the user model class..."/>
+    <listener event_id="template_create" execute_order="1" callback_class="GFNNotify_Listener_Template" callback_method="createPublicContainerTemplate" active="1" hint="PAGE_CONTAINER" description="Adds required externals..."/>
+  </code_event_listeners>
+  <cron/>
+  <email_templates/>
+  <email_template_modifications/>
+  <optiongroups/>
+  <permissions>
+    <permission_groups/>
+    <permissions/>
+    <interface_groups/>
+  </permissions>
+  <phrases>
+    <phrase title="gfnnotify_show_new_alerts_messages_as_pop_ups" version_id="1000411" version_string="1.0.4 Alpha 1"><![CDATA[Show new alerts and messages as pop ups]]></phrase>
+    <phrase title="redirecting" version_id="1000571" version_string="1.0.5"><![CDATA[Redirecting...]]></phrase>
+    <phrase title="style_property_group_GFNNotify_master" version_id="1000032" version_string="1.0.0 Beta 2"><![CDATA[GoodForNothing Notification]]></phrase>
+    <phrase title="style_property_group_GFNNotify_master_desc" version_id="1000032" version_string="1.0.0 Beta 2"><![CDATA[Style properties for the notification pop up items.]]></phrase>
+    <phrase title="style_property_notificationAvatarSize_description_master" version_id="1000032" version_string="1.0.0 Beta 2"><![CDATA[The size of the avatar that will be shown in the notification. This will also be used to determine the minimum height of the notification item.]]></phrase>
+    <phrase title="style_property_notificationAvatarSize_master" version_id="1000032" version_string="1.0.0 Beta 2"><![CDATA[Avatar Size]]></phrase>
+    <phrase title="style_property_notificationCloserColor_description_master" version_id="1000111" version_string="1.0.1 Alpha 1"><![CDATA[]]></phrase>
+    <phrase title="style_property_notificationCloserColor_master" version_id="1000111" version_string="1.0.1 Alpha 1"><![CDATA[Notification Close Button Color]]></phrase>
+    <phrase title="style_property_notificationCloserHoverColor_description_master" version_id="1000111" version_string="1.0.1 Alpha 1"><![CDATA[]]></phrase>
+    <phrase title="style_property_notificationCloserHoverColor_master" version_id="1000111" version_string="1.0.1 Alpha 1"><![CDATA[Notification Close Button Hover Color]]></phrase>
+    <phrase title="style_property_notificationCloserSize_description_master" version_id="1000111" version_string="1.0.1 Alpha 1"><![CDATA[The size of the 'close' button at the top right corner of a notification in pixels.]]></phrase>
+    <phrase title="style_property_notificationCloserSize_master" version_id="1000111" version_string="1.0.1 Alpha 1"><![CDATA[Notification Close Button Size]]></phrase>
+    <phrase title="style_property_notificationInterval_description_master" version_id="1000032" version_string="1.0.0 Beta 2"><![CDATA[The interval in micro seconds before popping another notification.]]></phrase>
+    <phrase title="style_property_notificationInterval_master" version_id="1000032" version_string="1.0.0 Beta 2"><![CDATA[Notification Interval]]></phrase>
+    <phrase title="style_property_notificationItemContent_description_master" version_id="1000111" version_string="1.0.1 Alpha 1"><![CDATA[]]></phrase>
+    <phrase title="style_property_notificationItemContent_master" version_id="1000111" version_string="1.0.1 Alpha 1"><![CDATA[Notification Item Content]]></phrase>
+    <phrase title="style_property_notificationItemLinkHover_description_master" version_id="1000111" version_string="1.0.1 Alpha 1"><![CDATA[]]></phrase>
+    <phrase title="style_property_notificationItemLinkHover_master" version_id="1000111" version_string="1.0.1 Alpha 1"><![CDATA[Notification Item Link Hover]]></phrase>
+    <phrase title="style_property_notificationItemLink_description_master" version_id="1000111" version_string="1.0.1 Alpha 1"><![CDATA[]]></phrase>
+    <phrase title="style_property_notificationItemLink_master" version_id="1000111" version_string="1.0.1 Alpha 1"><![CDATA[Notification Item Link]]></phrase>
+    <phrase title="style_property_notificationItem_description_master" version_id="1000111" version_string="1.0.1 Alpha 1"><![CDATA[The position, look and feel of the notification items.]]></phrase>
+    <phrase title="style_property_notificationItem_master" version_id="1000111" version_string="1.0.1 Alpha 1"><![CDATA[Notification Item]]></phrase>
+    <phrase title="style_property_notificationOpenTimer_description_master" version_id="1000032" version_string="1.0.0 Beta 2"><![CDATA[How long will the notification be open is micro seconds.]]></phrase>
+    <phrase title="style_property_notificationOpenTimer_master" version_id="1000032" version_string="1.0.0 Beta 2"><![CDATA[Notification Timer]]></phrase>
+  </phrases>
+  <route_prefixes>
+    <route_type type="public">
+      <prefix original_prefix="gfnnotify" class="GFNNotify_Route_Prefix_Notify" build_link="none"/>
+    </route_type>
+  </route_prefixes>
+  <style_properties>
+    <property property_name="notificationAvatarSize" property_type="scalar" definition="1" group_name="GFNNotify" title="Avatar Size" description="The size of the avatar that will be shown in the notification. This will also be used to determine the minimum height of the notification item." css_components="" scalar_type="number" scalar_parameters="" display_order="100" sub_group="look"><![CDATA[64px]]></property>
+    <property property_name="notificationOpenTimer" property_type="scalar" definition="1" group_name="GFNNotify" title="Notification Timer" description="How long will the notification be open is micro seconds." css_components="" scalar_type="number" scalar_parameters="" display_order="10" sub_group="backend"><![CDATA[10000]]></property>
+    <property property_name="notificationInterval" property_type="scalar" definition="1" group_name="GFNNotify" title="Notification Interval" description="The interval in micro seconds before popping another notification." css_components="" scalar_type="number" scalar_parameters="" display_order="20" sub_group="backend"><![CDATA[2000]]></property>
+    <property property_name="notificationItem" property_type="css" definition="1" group_name="GFNNotify" title="Notification Item" description="The position, look and feel of the notification items." css_components="text,background,border,layout,extra" scalar_type="" scalar_parameters="" display_order="10" sub_group=""><![CDATA[{"color":"rgb(114, 114, 117)","extra":"position: relative;\noverflow: hidden;\ncursor: pointer;","font-family":"'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif","font-size":"14px","font-weight":"bold","margin-bottom":"10px","margin-left":"10px"}]]></property>
+    <property property_name="notificationItemLink" property_type="css" definition="1" group_name="GFNNotify" title="Notification Item Link" description="" css_components="text,background" scalar_type="" scalar_parameters="" display_order="30" sub_group=""><![CDATA[{"color":"rgba(114, 114, 117, .7)","text-decoration":{"none":"none"}}]]></property>
+    <property property_name="notificationItemLinkHover" property_type="css" definition="1" group_name="GFNNotify" title="Notification Item Link Hover" description="" css_components="text,background" scalar_type="" scalar_parameters="" display_order="40" sub_group=""><![CDATA[{"color":"rgb(114, 114, 117)","text-decoration":{"none":"none"}}]]></property>
+    <property property_name="notificationCloserSize" property_type="scalar" definition="1" group_name="GFNNotify" title="Notification Close Button Size" description="The size of the 'close' button at the top right corner of a notification in pixels." css_components="" scalar_type="number" scalar_parameters="" display_order="110" sub_group="look"><![CDATA[20px]]></property>
+    <property property_name="notificationCloserColor" property_type="scalar" definition="1" group_name="GFNNotify" title="Notification Close Button Color" description="" css_components="" scalar_type="color" scalar_parameters="" display_order="120" sub_group="look"><![CDATA[#dddddd]]></property>
+    <property property_name="notificationCloserHoverColor" property_type="scalar" definition="1" group_name="GFNNotify" title="Notification Close Button Hover Color" description="" css_components="" scalar_type="color" scalar_parameters="" display_order="130" sub_group="look"><![CDATA[#aaaaaa]]></property>
+    <property property_name="notificationItemContent" property_type="css" definition="1" group_name="GFNNotify" title="Notification Item Content" description="" css_components="text,background,border,layout,extra" scalar_type="" scalar_parameters="" display_order="12" sub_group=""><![CDATA[{"background-color":"rgb(255, 255, 255)","extra":"box-sizing: border-box;\nline-height: 1.4;\nmax-width: calc(100vw - 20px);","padding-bottom":"5px","padding-left":"80px","padding-right":"40px","padding-top":"5px","width":"400px"}]]></property>
+    <group group_name="GFNNotify" display_order="2000">
+      <title>GoodForNothing Notification</title>
+      <description>Style properties for the notification pop up items.</description>
+    </group>
+  </style_properties>
+  <templates>
+    <template title="gfnnotify" version_id="1000671" version_string="1.0.6"><![CDATA[<xen:edithint template="gfnnotify_item" />
+
+<xen:if is="{$visitor.show_notification_popup}">
+	<xen:require css="gfnnotify.css" />
+	<xen:require js="js/gfnnotify/notification.js" />
+	
+	<div id="GFNNotification" data-url="{xen:link gfnnotify/get-notifications}" data-timer="{xen:property notificationOpenTimer}" data-interval="{xen:property notificationInterval}" data-mark-read="{xen:link gfnnotify/mark-read}"></div>
+</xen:if>]]></template>
+    <template title="gfnnotify.css" version_id="1000571" version_string="1.0.5"><![CDATA[#GFNNotification {
+	display: block;
+	width: auto;
+	max-height: 100vh;
+	overflow: hidden;
+	max-width: 100vw;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	z-index: 100000;
+}
+
+.notificationItem {
+	{xen:property notificationItem}
+	
+}
+
+.notificationWrapper {
+	overflow: hidden;
+	min-height: {xen:property notificationAvatarSize};
+	position: relative;
+}
+
+.notificationText {
+	min-height: {xen:property notificationAvatarSize};
+	{xen:property notificationItemContent}
+}
+
+.notificationItem a,
+.notificationItem b,
+.notificationItem strong {
+	{xen:property notificationItemLink}
+}
+
+.notificationItem a:hover,
+.notificationItem a:focus,
+.notificationItem a:active {
+	{xen:property notificationItemLinkHover}
+}
+
+.notificationCloser {
+	width: {xen:property notificationCloserSize};
+	height: {xen:property notificationCloserSize};
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	overflow: hidden;
+	cursor: pointer;
+	-webkit-backface-visibility: hidden;
+	backface-visibility: hidden;
+}
+
+.notificationCloser:hover,
+.notificationCloser:focus {
+	outline: none;
+}
+
+.notificationCloser:before,
+.notificationCloser:after {
+	content: '';
+	position: absolute;
+	width: 2px;
+	height: 60%;
+	top: 50%;
+	left: 50%;
+	background-color: {xen:property notificationCloserColor};
+}
+
+.notificationCloser:hover:before,
+.notificationCloser:hover:after {
+	background-color: {xen:property notificationCloserHoverColor};
+}
+
+.notificationCloser:before {
+	-webkit-transform: translate(-50%,-50%) rotate(45deg);
+	transform: translate(-50%,-50%) rotate(45deg);
+}
+
+.notificationCloser:after {
+	-webkit-transform: translate(-50%,-50%) rotate(-45deg);
+	transform: translate(-50%,-50%) rotate(-45deg);
+}
+
+.notificationItem.hide {
+	-webkit-animation-direction: reverse;
+	animation-direction: reverse;
+}
+
+.notificationItem .userAvatar {
+	height: {xen:property notificationAvatarSize};
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1000;
+}
+
+.notificationItem .userAvatar > img {
+	height: {xen:property notificationAvatarSize};
+}
+
+.notificationItem.show .userAvatar,
+.notificationItem.hide .userAvatar {
+	-webkit-animation-name: animJelly;
+	animation-name: animJelly;
+	-webkit-animation-duration: 1s;
+	animation-duration: 1s;
+	-webkit-animation-timing-function: linear;
+	animation-timing-function: linear;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+
+.notificationItem.hide .userAvatar {
+	-webkit-animation-direction: reverse;
+	animation-direction: reverse;
+	-webkit-animation-delay: 0.3s;
+	animation-delay: 0.3s;
+}
+
+.notificationItem.show .notificationText p,
+.notificationItem.hide .notificationText p,
+.notificationItem.show .notificationCloser,
+.notificationItem.hide .notificationCloser {
+	-webkit-animation-name: animFade;
+	animation-name: animFade;
+	-webkit-animation-duration: 0.3s;
+	animation-duration: 0.3s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+
+.notificationItem.show .notificationText p,
+.notificationItem.show .notificationCloser {
+	-webkit-animation-delay: 0.8s;
+	animation-delay: 0.8s;
+}
+
+.notificationItem.hide .notificationText p,
+.notificationItem.hide .notificationCloser {
+	-webkit-animation-direction: reverse;
+	animation-direction: reverse;
+}
+
+.notificationItem.show .notificationText,
+.notificationItem.hide .notificationText {
+	-webkit-animation-name: animSlide;
+	animation-name: animSlide;
+	-webkit-animation-duration: 0.4s;
+	animation-duration: 0.4s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+	-webkit-animation-timing-function: cubic-bezier(0.7,0,0.3,1);
+	animation-timing-function: cubic-bezier(0.7,0,0.3,1);
+}
+
+.notificationItem.show .notificationText {
+	-webkit-animation-delay: 0.5s;
+	animation-delay: 0.5s;
+}
+
+.notificationItem.hide .notificationText {
+	-webkit-animation-direction: reverse;
+	animation-direction: reverse;
+	-webkit-animation-delay: 0.3s;
+	animation-delay: 0.3s;
+}]]></template>
+    <template title="gfnnotify_item" version_id="1000671" version_string="1.0.6"><![CDATA[<div class="notificationItem" data-alert-id="{$alertId}">
+	<div class="notificationWrapper">
+		<div class="userAvatar">
+			<img src="{xen:helper avatar, $user, 'm'}" alt="{$user.username}" />
+		</div>
+		
+		<div class="notificationText">
+			<p>{xen:raw $content}</p>
+		</div>
+	</div>
+	
+	<a class="notificationCloser"></a>
+</div>]]></template>
+  </templates>
+  <public_template_modifications>
+    <modification template="account_preferences" modification_key="gfnnotify_account_preferences" description="" execution_order="10" enabled="1" action="str_replace">
+      <find><![CDATA[<li><label for="ctrl_enable_rte">]]></find>
+      <replace><![CDATA[<li><label for="ctrl_show_notification_popup"><input type="checkbox" name="show_notification_popup" id="ctrl_show_notification_popup" value="1" {xen:checked "{$visitor.show_notification_popup}"} /> {xen:phrase gfnnotify_show_new_alerts_messages_as_pop_ups}</label></li>
+$0]]></replace>
+    </modification>
+    <modification template="PAGE_CONTAINER" modification_key="gfnnotify_page_container" description="" execution_order="10" enabled="1" action="str_replace">
+      <find><![CDATA[</body>]]></find>
+      <replace><![CDATA[<xen:include template="gfnnotify" />
+$0]]></replace>
+    </modification>
+  </public_template_modifications>
+  <bb_code_media_sites/>
+  <bb_codes/>
+</addon>
