@@ -1,9 +1,9 @@
 <?php
 
-$config['db']['host'] = '127.0.0.1';
+$config['db']['host'] = 'localhost';
 $config['db']['port'] = '3306';
-$config['db']['username'] = 'root';
-$config['db']['password'] = '';
+$config['db']['username'] = 'xenforo';
+$config['db']['password'] = 'admin';
 $config['db']['dbname'] = 'xenforo';
 
 
