@@ -1,0 +1,212 @@
+div#content {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+
+    > ul,
+    > ul > li {
+        display: block;
+        list-style: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    > ul > li {
+        position: relative;
+
+        &.file-manager {
+            $height-file-location: 50px;
+
+            ul.file-location,
+            ul.file-location li {
+                display: block;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                height: $height-file-location;
+            }
+
+            ul.file-location {
+                background-color: #ffffff;
+                overflow: hidden;
+                white-space: nowrap;
+                position: relative;
+                top: 0;
+                left: 0;
+                padding: 15px;
+                padding-top: 0;
+                padding-bottom: 0;
+                z-index: 1;
+
+                @include box-shadow(1px 1px 5px rgba(0, 0, 0, 0.3));
+
+                li {
+                    display: inline-block;
+
+                    span {
+                        display: inline-block;
+                        color: #606060;
+                        font-size: 17px;
+                        margin: 0;
+                        padding: 0;
+                        line-height: $height-file-location;
+
+                        &.label {
+                            cursor: pointer;
+
+                            &:hover {
+                                color: #a0a0a0;
+                            }
+                        }
+
+                        &.separator {
+                            border: 6px solid transparent;
+                            border-left: 6px solid #606060;
+                            position: relative;
+                            margin-left: 10px;
+
+                            &::before {
+                                content: "";
+                                position: absolute;
+                                border: 4px solid transparent;
+                                border-left: 4px solid #ffffff;
+                                top: -4px;
+                                left: -6px;
+                            }
+                        }
+                    }
+                }
+            }
+
+            div.list-file {
+                background-color: transparent;
+                position: relative;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+
+                ul.list,
+                ul.list > li {
+                    display: inline-block;
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                }
+
+                ul.list {
+                    width: 100%;
+
+                    > li {
+                        width: 25%;
+                        float: left;
+                        text-align: center;
+
+                        > div:only-child {
+                            background-color: #ffffff;
+                            display: inline-block;
+                            cursor: pointer;
+                            overflow: hidden;
+                            margin: 0;
+                            margin-top: 3%;
+                            margin-bottom: 3%;
+                            padding: 0;
+                            width: 94%;
+                            height: 94%;
+                            text-align: left;
+
+                            @include border-radius(5px 5px);
+                            @include box-shadow(1px 1px 1px rgba(0, 0, 0, 0.25));
+
+                            span {
+                                color: #707070;
+                                font-size: 15px;
+                                vertical-align: middle;
+
+                                &.icomoon {
+                                    color: #707070;
+                                    font-size: 20px;
+                                    line-height: 25px;
+
+                                    &.icon-folder,
+                                    &.icon-folder-open {
+                                        color: #ffb300;
+                                        font-size: 25px;
+                                        line-height: 25px;
+                                    }
+
+                                    &.icon-spinner {
+                                        font-size: 20px;
+                                    }
+                                }
+                            }
+
+                            p.label,
+                            p.info {
+                                display: inline-block;
+                                margin: 0;
+                                padding: 5px;
+                                width: 100%;
+                            }
+
+                            p.label {
+                                color: #808080;
+                                padding: 10px;
+                                max-width: 90%;
+                                overflow: hidden;
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
+
+                                span.icomoon {
+                                    margin-right: 5px;
+                                }
+
+                                span.filename {
+                                    color: #808080;
+                                }
+                            }
+
+                            p.info {
+                                border-top: 1px dashed #dadada;
+                                padding-left: 0;
+                                text-align: right;
+
+                                span {
+                                    color: #c0c0c0;
+                                    display: inline-block;
+                                    font-size: 14px;
+
+                                    &.size + span,
+                                    &:last-child {
+                                        padding-right: 5px;
+                                    }
+                                }
+                            }
+
+                            &:hover {
+                                background-color: #eaeaea;
+
+                                p.label {
+                                    color: #303030;
+
+                                    span.filename {
+                                        color: #303030;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

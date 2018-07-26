@@ -1,0 +1,15 @@
+manager/assets/backup/mysql/*
+manager/assets/user/*
+manager/assets/tmp/*
+manager/assets/javascript/dev/*
+manager/assets/javascript/*.js
+manager/assets/theme/default/*.css
+manager/assets/theme/default/sass/*
+!manager/assets/javascript/*.min.js
+!manager/assets/theme/default/*.min.css
+manager/.gitattributes
+manager/.gitignore
+manager/package.json
+manager/gulpfile.js
+manager/additional.zip
+manager/bin.zip

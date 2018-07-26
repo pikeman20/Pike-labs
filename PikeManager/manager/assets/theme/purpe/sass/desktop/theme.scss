@@ -1,0 +1,46 @@
+@import "../variables.scss";
+@import "../mixin.scss";
+@import "../icomoon/style.scss";
+
+@import "variables.scss";
+
+body {
+    background-color: #e0e0e0;
+    font-family: $font-family;
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+
+a {
+    &:link,
+    &:visited {
+        color: #505050;
+        text-decoration: none;
+    }
+
+    &:hover,
+    &:focus {
+        span,
+        strong,
+        p {
+            color: #909090;
+            text-decoration: none;
+        }
+    }
+}
+
+@import "form.scss";
+@import "container.scss";
+@import "spinner.scss";
+@import "loading.scss";
+@import "header.scss";
+@import "contextmenu.scss";
+@import "sidebar.scss";
+@import "content.scss";
+@import "scroll.scss";
+@import "alert.scss";
+@import "login.scss";

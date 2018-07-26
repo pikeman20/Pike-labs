@@ -1,0 +1,164 @@
+div#container {
+    div#login {
+        display: none;
+        text-align: center;
+        padding-left: 10px;
+        padding-right: 10px;
+        position: absolute;
+        width: 400px;
+        top: 50%;
+        left: 50%;
+
+        @include transform(translate(-50%, -50%));
+
+        > form {
+            display: block;
+            background-color: #ffffff;
+            position: relative;
+            padding: 0;
+
+            @include box-shadow(1px 1px 5px rgba(0, 0, 0, 0.15), -1px -1px 5px rgba(0, 0, 0, 0.15));
+            @include border-radius(8px 8px);
+
+            h2 {
+                color: #505050;
+                font-size: 1.1em;
+                font-weight: normal;
+                padding: 20px;
+                margin: 0;
+            }
+
+            > ul {
+                display: block;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                text-align: left;
+
+                $height_input: 65px;
+                $color_input: #a0a0a0;
+                $color_focus_input: #505050;
+
+                li.input {
+                    position: relative;
+
+                    input {
+                        color: $color_input;
+                        border: 0;
+                        font-size: 15px;
+                        height: $height_input;
+                        display: block;
+                        width: 100%;
+                        padding-left: $height_input;
+                        padding-right: $height_input / 2;
+
+                        @include box-sizing(border-box);
+                        @include border-radius(8px 8px);
+
+                        + span.icomoon {
+                            color: $color_input;
+                            font-size: 20px;
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: $height_input;
+                            height: $height_input;
+                            line-height: $height_input;
+                            text-align: center;
+                        }
+
+                        &:hover, &:focus {
+                            color: $color_focus_input;
+                            outline: none;
+
+                            + span {
+                                color: $color_focus_input;
+                            }
+                        }
+                    }
+
+                    &.captcha {
+                        padding-right: ($height_input / 2) + 100px;
+
+                        img {
+                            position: absolute;
+                            top: ($height_input - 45px) / 2;
+                            right: $height_input / 2;
+                        }
+                    }
+                }
+
+                li.checkbox {
+                    height: $height_input;
+                    position: relative;
+                    padding-left: $height_input;
+                    padding-right: $height_input / 2;
+
+                    label {
+                        span {
+                            height: $height_input;
+                            line-height: $height_input;
+
+                            a {
+                                display: inline;
+
+                                span {
+                                    color: #00897b;
+                                    height: $height_input;
+                                    line-height: $height_input;
+                                }
+
+                                &:hover span {
+                                    color: #009688 !important;
+                                }
+                            }
+                        }
+
+                        &::before {
+                            color: $color_input;
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: $height_input;
+                            height: $height_input;
+                            line-height: $height_input;
+                            text-align: center;
+                        }
+                    }
+                }
+
+                li.button {
+                    border-top: 1px dashed #d0d0d0;
+
+                    $height: 55px;
+
+                    button, a {
+                        background-color: transparent;
+                        border: 0;
+                        outline: 0;
+                        font-size: 15px;
+                        font-family: $font-family;
+                        display: inline-block;
+                        width: 49%;
+                        height: $height;
+                        line-height: $height;
+                        margin: 0;
+                        padding: 0;
+                        cursor: pointer;
+                        text-align: center;
+
+                        span {
+                            color: #505050;
+                        }
+
+                        &:hover {
+                            span {
+                                color: #00897b;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

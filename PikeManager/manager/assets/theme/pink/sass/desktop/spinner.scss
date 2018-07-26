@@ -1,0 +1,11 @@
+@include keyframes(spinnerFrames) {
+    from { @include transform(rotate(0deg)); }
+
+    to { @include transform(rotate(360deg)); }
+}
+
+.spinner-animation {
+    display: inline-block;
+
+    @include animation(spinnerFrames 2s linear infinite);
+}

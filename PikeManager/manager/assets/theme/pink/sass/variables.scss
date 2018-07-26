@@ -1,0 +1,374 @@
+$font-family: Helvetica, Arial, "Liberation Sans", sans-serif;
+$font-size: 15px;
+$background-opaticy-all: 0.05;
+$background-all: #ffffff;
+$box-shadow-color-all: rgba(0, 0, 0, 0.3);
+
+$body-background-color: #e3e3e3;
+$body-background-image: "";
+$body-background-position: 0 0;
+$body-background-size: auto;
+$body-background-repeat: repeat;
+
+$a-link-visited: #505050;
+$a-hover-focus: #909090;
+
+$progress-bar-body-background-color: #ff6d00;
+$progress-bar-body-box-shadow-hoz: 0;
+$progress-bar-body-box-shadow-ver: 1px;
+$progress-bar-body-box-shadow-blur: 1px;
+$progress-bar-body-box-shadow-color: rgba(0, 0, 0, 0.5);
+
+$input-placeholder-color: #808080;
+$input-textara-select-color: #c0c0c0;
+$input-textara-select-border-bottom-size: 2px;
+$input-textara-select-border-bottom-style: solid;
+$input-textara-select-border-bottom-color: #e0e0e0;
+$input-textara-select-disabled-background-color: #f0f0f0;
+
+$input-textara-select-disabled-color: #707070;
+$input-textara-select-hover-enabled-color: #505050;
+$input-textara-select-disabled-border-bottom-color: #c0c0c0;
+$input-textara-select-hover-enabled-border-bottom-color: #a0a0a0;
+
+$input-textara-select-enabled-not-none-invalid-color: #ef5350;
+$input-textara-select-enabled-not-none-invalid-border-bottom-color: #ef5350;
+
+$input-type-checkbox-radio-entry-list-label-before-color: #a0a0a0;
+$input-type-checkbox-radio-entry-list-label-before-text-shadow-hoz: 1px;
+$input-type-checkbox-radio-entry-list-label-before-text-shadow-ver: 1px;
+$input-type-checkbox-radio-entry-list-label-before-text-shadow-blur: 1px;
+$input-type-checkbox-radio-entry-list-label-before-text-shadow-color: rgba(255, 255, 255, 0.2);
+
+$input-type-checkbox-radio-entry-list-hover-label-before-color: #c0c0c0;
+$input-type-checkbox-radio-entry-list-checked-label-before-color: #f06292;
+$input-type-checkbox-radio-entry-list-disabled-label-before-color: #c0c0c0;
+$input-type-checkbox-radio-entry-list-disabled-label-before-background-color: #eaeaea;
+$input-type-checkbox-radio-entry-list-checked-hover-label-before-color: #ec407a;
+
+$input-type-checkbox-radio-entry-list-label-span-color: #707070;
+$input-type-checkbox-radio-entry-list-hover-label-span-color: #707070;
+$input-type-checkbox-radio-entry-list-checked-label-span-color: #707070;
+$input-type-checkbox-radio-entry-list-disabled-label-span-color: #707070;
+$input-type-checkbox-radio-entry-list-checked-hover-label-span-color: #707070;
+
+$div-select-before-color: #c0c0c0;
+$div-select-before-option-color: #ffffff;
+$div-select-before-option-background-color: #202020;
+
+$ul-radio-choose-tab-li-input-label-background-color: #f0f0f0;
+$ul-radio-choose-tab-li-input-label-span-color: #505050;
+$ul-radio-choose-tab-li-input-disabled-label-span-color: #505050;
+$ul-radio-choose-tab-li-input-enabled-label-hover: #e0e0e0;
+$ul-radio-choose-tab-li-input-enabled-checked-label-hover: #ec407a;
+$ul-radio-choose-tab-li-input-enabled-checked-label-hover-span: #ffffff;
+$ul-radio-choose-tab-li-input-label-enabled-hover-span: #ec407a;
+
+$header-height: 55px;
+$header-background-color: #ec407a;
+$header-box-shadow-hoz: 0;
+$header-box-shadow-ver: 1px;
+$header-box-shadow-blur: 5px;
+$header-box-shadow-color: rgba(0, 0, 0, 0.5);
+
+$header-div-logo-width: 50px;
+$header-a-span-logo-color: #ffffff;
+$header-a-span-logo-font-size: 24px;
+$header-a-hover-span-logo-color: #ffffff;
+$header-a-hover-span-logo-text-shadow-hoz: 1px;
+$header-a-hover-span-logo-text-shadow-ver: 1px;
+$header-a-hover-span-logo-text-shadow-blur: 1px;
+$header-a-hover-span-logo-text-shadow-color: rgba(0, 0, 0, 0.3);
+
+$header-ul-action-li-a-span-color: #ffffff;
+$header-ul-action-li-a-hover-span-color: #d0d0d0;
+$header-ul-action-li-a-span-font-size: 20px;
+$header-ul-action-li-a-span-text-shadow-hoz: 1px;
+$header-ul-action-li-a-span-text-shadow-ver: 1px;
+$header-ul-action-li-a-span-text-shadow-blur: 1px;
+$header-ul-action-li-a-span-text-shadow-color: rgba(0, 0, 0, 0.3);
+
+$header-ul-action-li-span-autoload-is-disable-color: #e0e0e0;
+$header-ul-action-li-span-autoload-is-disable-text-shadow-hoz: 1px;
+$header-ul-action-li-span-autoload-is-disable-text-shadow-ver: 1px;
+$header-ul-action-li-span-autoload-is-disable-text-shadow-blur: 1px;
+$header-ul-action-li-span-autoload-is-disable-text-shadow-color: transparent;
+
+$footer-border-top-size: 1px;
+$footer-border-top-style: solid;
+$footer-border-top-color: #dadada;
+$footer-max-width: 200px;
+$footer-after-background-color: #efefef;
+$footer-span-color: #d0d0d0;
+$footer-span-text-shadow-hoz: 1px;
+$footer-span-text-shadow-ver: 1px;
+$footer-span-text-shadow-blur: 1px;
+$footer-span-text-shadow-color: #efefef;
+
+$alert-margin-bottom: 30px;
+$alert-li-background-color: $background-all;
+$alert-li-box-shadow-hoz: 1px;
+$alert-li-box-shadow-ver: 1px;
+$alert-li-box-shadow-blur: 2px;
+$alert-li-box-shadow-color: $box-shadow-color-all;
+$alert-li-color: #505050;
+$alert-li-a-hover-color: #707070;
+$alert-li-danger-color: #bf1c1c;
+$alert-li-success-color: #33691c;
+$alert-li-warning-color: #ef6c00;
+$alert-li-info-color: #006064;
+$alert-li-danger-background-color: #ffcdd2;
+$alert-li-success-background-color: #dcedc8;
+$alert-li-warning-background-color: #ffe0b2;
+$alert-li-info-background-color: #b2ebf2;
+$alert-li-info-a-hover-color: #00acc1;
+
+$menu-action-background-color: $background-all;
+$menu-action-box-shadow-hoz: 1px;
+$menu-action-box-shadow-ver: 1px;
+$menu-action-box-shadow-blur: 1px;
+$menu-action-box-shadow-color: $box-shadow-color-all;
+$menu-action-margin-top: 15px;
+$menu-action-margin-bottom: 15px;
+
+$menu-action-li-a-span-color: #505050;
+$menu-action-li-a-hover-span-color: #707070;
+
+$paging-background-color: transparent;
+$paging-box-shadow-hoz: 1px;
+$paging-box-shadow-ver: 1px;
+$paging-box-shadow-blur: 2px;
+$paging-box-shadow-color: rgba(0, 0, 0, 0.15);
+
+$paging-li-current-strong-color: #ffffff;
+$paging-li-current-strong-background-color: #ec407a;
+$paging-li-current-strong-padding: 5px;
+
+$paging-li-other-span-color: #ec407a;
+$paging-li-other-a-hover-span-color: #ffffff;
+$paging-li-other-span-background-color: #f0f0f0;
+$paging-li-other-span-a-hover-background-color: #404040;
+$paging-li-other-span-padding: 5px;
+
+$paging-jump-span-color: #707070;
+$paging-jump-a-hover-span-color: #a0a0a0;
+
+$form-action-background-color: $background-all;
+$form-action-margin-bottom: 15px;
+$form-action-box-shadow-hoz: 1px;
+$form-action-box-shadow-ver: 1px;
+$form-action-box-shadow-blur: 2px;
+$form-action-box-shadow-color: $box-shadow-color-all;
+
+$form-action-div-title-span-color: #505050;
+$form-action-div-title-span-font-size: 17px;
+
+$form-action-ul-form-element-li-span-label: #ec407a;
+$form-action-ul-form-element-li-input-chmod-color: #ffffff;
+$form-action-ul-form-element-li-input-chmod-background-color: #ec407a;
+$form-action-ul-form-element-li-input-chmod-input-checkbox-label-background-color: #f0f0f0;
+$form-action-ul-form-element-li-input-chmod-input-checkbox-label-span-color: #e0e0e0;
+$form-action-ul-form-element-li-input-chmod-input-checkbox-label-hover-span-color: #c0c0c0;
+$form-action-ul-form-element-li-input-chmod-input-checkbox-checked-label-background-color: #e0e0e0;
+$form-action-ul-form-element-li-input-chmod-input-checkbox-checked-label-span-color: #505050;
+$form-action-ul-form-element-li-input-chmod-input-checkbox-checked-label-hover-background-color: #eaeaea;
+
+$form-action-ul-form-element-li-radio-choose-span-color: #ec407a;
+$form-action-ul-form-element-li-radio-choose-span-margin-bottom: 10px;
+
+$form-action-ul-form-element-li-accept-span-color: #505050;
+$form-action-ul-form-element-li-accept-strong-color: #e53935;
+$form-action-ul-form-element-li-accept-span-line-height: 22px;
+
+$form-action-ul-form-element-li-button-button-span-color: #ec407a;
+$form-action-ul-form-element-li-button-button-hover-span-color: #f06292;
+
+$form-action-ul-form-element-li-button-a-span-color: #404040;
+$form-action-ul-form-element-li-button-a-hover-span-color: #ec407a;
+$form-action-ul-form-element-li-button-button-a-hover-backround-color: #f0f0f0;
+
+$action-multi-background-color: $background-all;
+$action-multi-margin-bottom: 15px;
+$action-multi-box-shadow-hoz: 1px;
+$action-multi-box-shadow-ver: 1px;
+$action-multi-box-shadow-blur: 2px;
+$action-multi-box-shadow-color: $box-shadow-color-all;
+
+$action-multi-li-button-background-color: transparent;
+$action-multi-li-button-height: 45px;
+$action-multi-li-button-hover-focus-color: #707070;
+$action-multi-li-span-icon-font-size: 18px;
+$action-multi-li-button-span-color: #505050;
+
+$login-max-width: 480px;
+$login-max-padding-top: 15%;
+
+$login-background-color: $background-all;
+$login-margin-bottom: 100px;
+$login-box-shadow-hoz: 1px;
+$login-box-shadow-ver: 1px;
+$login-box-shadow-blur: 2px;
+$login-box-shadow-color: $box-shadow-color-all;
+
+$login-form-ul-height-input: 65px;
+$login-form-ul-input-color: #a0a0a0;
+$login-form-ul-input-focus-color: #505050;
+
+$login-form-ul-li-button-border-top-size: 1px;
+$login-form-ul-li-button-border-top-style: dashed;
+$login-form-ul-li-button-border-top-color: #e0e0e0;
+$login-form-ul-li-button-height: 55px;
+$login-form-ul-li-button-span-color: #505050;
+$login-form-ul-li-button-hover-span-color: #a0a0a0;
+
+$login-form-input-color: #a0a0a0;
+$login-form-input-focus-color: #303030;
+$login-form-input-placeholder-color: #303030;
+
+$about-background-color: $background-all;
+$about-margin-bottom: 15px;
+$about-box-shadow-hoz: 1px;
+$about-box-shadow-ver: 1px;
+$about-box-shadow-blur: 2px;
+$about-box-shadow-color: $box-shadow-color-all;
+
+$about-h1-color: #ec407a;
+$about-h5-color: #c0c0c0;
+$about-h1-font-size: 300%;
+$about-h5-font-size: 100%;
+$about-h1-font-size-small: 20px;
+$about-h1-text-shadow-hoz: 1px;
+$about-h1-text-shadow-ver: 1px;
+$about-h1-text-shadow-blur: 5px;
+$about-h1-text-shadow-color: rgba(0, 0, 0, 0.2);
+
+$about-ul-border-top-size: 1px;
+$about-ul-border-top-style: dashed;
+$about-ul-border-top-color: #e0e0e0;
+
+$about-ul-li-lable-li-span-color: #ec407a;
+$about-ul-li-lable-li-span-font-weight: bold;
+$about-ul-li-lable-li-span-font-size: 15px;
+
+$about-ul-li-value-li-span-color: #707070;
+$about-ul-li-value-li-span-status-on-enabled-color: #2d7e32;
+$about-ul-li-value-li-span-status-off-disabled-color: #c62828;
+$about-ul-li-value-li-span-status-unknown-color: #ff8f00;
+
+$about-ul-li-message-div-title-span-color: #ec407a;
+$about-ul-li-message-div-content-span-color: #505050;
+$about-ul-li-message-div-title-span-font-weight: bold;
+
+$about-ul-li-message-divider-border-size: 1px;
+$about-ul-li-message-divider-border-style: dashed;
+$about-ul-li-message-divider-border-color: #e0e0e0;
+
+$about-div-about-button-check-color: #707070;
+$about-div-about-button-check-font-weight: bold;
+$about-div-about-button-check-border-top-size: 1px;
+$about-div-about-button-check-border-top-style: dashed;
+$about-div-about-button-check-border-top-color: #e0e0e0;
+
+$locatiton-path-background-color: $background-all;
+$locatiton-path-margin-bottom: 15px;
+$locatiton-path-padding-left: 10px;
+$locatiton-path-padding-right: 10px;
+$locatiton-path-box-shadow-hoz: 1px;
+$locatiton-path-box-shadow-ver: 1px;
+$locatiton-path-box-shadow-blur: 2px;
+$locatiton-path-box-shadow-color: $box-shadow-color-all;
+
+$locatiton-path-li-height: 45px;
+$locatiton-path-li-max-width: 150px;
+$locatiton-path-span-color: #505050;
+$locatiton-path-a-hover-span-color: #a0a0a0;
+$locatiton-path-font-weight: bold;
+
+$mysql-query-string-span-color: #707070;
+
+$list-background-color: $background-all;
+$list-margin-bottom: 15px;
+$list-box-shadow-hoz: 1px;
+$list-box-shadow-ver: 1px;
+$list-box-shadow-blur: 2px;
+$list-box-shadow-color: $box-shadow-color-all;
+$list-li-height: 45px;
+
+$list-li-border-size: 1px;
+$list-li-border-style: dashed;
+$list-li-border-color: #e0e0e0;
+
+$list-li-a-hover-color: #909090;
+$list-li-a-hover-icon-color: #f06292;
+
+$list-li-div-info-span-color: #d0d0d0;
+$list-li-div-info-a-hover-span-color: #a0a0a0;
+
+$list-li-empty-span-color: #ef5350;
+$list-li-li-div-a-chmod-size-span-color: #d0d0d0;
+$list-li-li-div-a-chmod-size-a-hover-span-color: #a0a0a0;
+
+$list-li-directory-color: #505050;
+$list-li-directory-icon-color: #e91e63;
+$list-li-directory-icon-font-size: 25px;
+
+$list-li-database-icon-color: #e91e63;
+$list-li-database-a-hover-icon-color: #f06292;
+$list-li-database-icon-font-size: 22px;
+
+$list-li-order-span-choose-color: #ec407a;
+$list-li-order-a-hover-span-choose-color: #f06292;
+$list-li-order-span-current-color: #707070;
+$list-li-order-span-text-color: #505050;
+
+$list-li-file-color: #606060;
+$list-li-file-a-hover-icon-color: #909090;
+
+$list-li-data-tr-hover: rgba(0, 0, 0, 0.08);
+$list-li-data-td-border-size: 1px;
+$list-li-data-td-border-style: dashed;
+$list-li-data-td-border-color: #e0e0e0;;
+$list-li-data-td-color: #505050;
+
+$list-file-name-of-app-color: #909090;
+
+$info-background-color: $background-all;
+$info-margin-bottom: 15px;
+$info-box-shadow-hoz: 1px;
+$info-box-shadow-ver: 1px;
+$info-box-shadow-blur: 2px;
+$info-box-shadow-color: $box-shadow-color-all;
+
+$info-li-height: 30px;
+
+$info-li-title-span-color: #505050;
+$info-li-title-list-span-color: #505050;
+$info-li-title-span-font-size: 17px;
+
+$info-li-divider-border-top-size: 1px;
+$info-li-divider-border-top-style: dashed;
+$info-li-divider-border-top-color: #e0e0e0;
+
+$info-li-label-span-color: #ec407a;
+$info-li-value-span-color: #707070;
+$info-li-label-span-font-weight: bold;
+
+$info-li-image-span-color: #c0c0c0;
+
+$info-li-comment-border-top-size: 1px;
+$info-li-comment-border-top-style: dashed;
+$info-li-comment-border-top-color: #e0e0e0;
+
+$info-li-comment-div-title-span-color: #ec407a;
+$info-li-comment-div-title-span-font-weight: bold;
+
+$info-li-comment-div-comment-span-color: #707070;
+
+$markdown-color: #505050;
+$markdown-p-color: #505050;
+$markdown-hr-border-bottom-size: 1px;
+$markdown-hr-border-bottom-style: solid;
+$markdown-hr-border-bottom-color: #e0e0e0;
+
+$theme-choose-li-label-hover-div-box-shadow-color: rgba(0, 0, 0, 0.1);
+$theme-choose-li-checked-label-hover-div-box-shadow-color: rgba(0, 0, 0, 0.1);
