@@ -12,7 +12,9 @@ class Brivium_Credits_Deferred_ActionTrigger extends XenForo_Deferred_Abstract
 		$data = array_merge(array(
 			'position' => 0,
 			'action_id' => '',
-			'batch' => 70
+			'batch' => 100,
+			'criteria' => array(),
+			'data_credit' => array(),
 		), $data);
 
 		if(empty($data['action_id'])){
@@ -32,14 +34,15 @@ class Brivium_Credits_Deferred_ActionTrigger extends XenForo_Deferred_Abstract
 
 		$creditModel = XenForo_Model::create('Brivium_Credits_Model_Credit');
 
-		$criteria = array(
-			'user_state' => 'valid',
-			'is_banned' => 0,
-			'brc_user_id_start' => $data['position'],
-		);
+		$criteria = $data['criteria'];
+		$criteria['user_state'] = 'valid';
+		$criteria['is_banned'] = 0;
+		$criteria['brc_user_id_start'] = $data['position'];
+
+
 		$users = $userModel->getUsersInRange($criteria, array(
 			'join' => XenForo_Model_User::FETCH_USER_OPTION | XenForo_Model_User::FETCH_USER_PERMISSIONS,
-			'limit' => $data['batch']
+			'limit' => $data['batch'],
 		));
 		if (sizeof($users) == 0)
 		{
@@ -49,12 +52,13 @@ class Brivium_Credits_Deferred_ActionTrigger extends XenForo_Deferred_Abstract
 		$creditModel->setIsBulk(true);
 		$creditModel->setIsWaitSubmit(true);
 		$userIds = array();
+		$dataCredit = $data['data_credit'];
 
 		foreach ($users AS $userId=>$user)
 		{
 			$data['position'] = $userId;
-
-			if($eventIds = $creditModel->updateUserCredit($actionId, $user['user_id'], array('user'=>$user))){
+			$dataCredit['user'] = $user;
+			if($eventIds = $creditModel->updateUserCredit($actionId, $user['user_id'], $dataCredit)){
 				if(is_array($eventIds)){
 					foreach($eventIds AS $eventId){
 						if(empty($userIds[$eventId])){

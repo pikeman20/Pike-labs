@@ -42,8 +42,12 @@ class Brivium_Credits_Model_User extends XFCP_Brivium_Credits_Model_User
 			return $result;
 		}
 	}
+
 	public function prepareUserOrderOptions(array &$fetchOptions, $defaultOrderSql = '')
 	{
+		if(!empty($fetchOptions['order']) && $fetchOptions['order']=='brc_user_id'){
+
+		}
 		$currencies = XenForo_Application::get('brcCurrencies')->getCurrencies();
 		$choices = array();
 		foreach($currencies AS $currency){

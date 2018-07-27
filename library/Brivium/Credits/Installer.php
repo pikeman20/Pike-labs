@@ -1,4 +1,6 @@
 <?php
+
+ 
 class Brivium_Credits_Installer extends Brivium_BriviumHelper_Installer
 {
 	protected $_installerType = 1;
@@ -149,6 +151,7 @@ class Brivium_Credits_Installer extends Brivium_BriviumHelper_Installer
 		$tables["xf_brivium_credits_transaction"] = "
 			CREATE TABLE IF NOT EXISTS `xf_brivium_credits_transaction` (
 			  `transaction_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			  `transaction_key` varbinary(50) NOT NULL DEFAULT '',
 			  `action_id` varchar(100) NOT NULL,
 			  `event_id` int(10) unsigned NOT NULL DEFAULT '0',
 			  `currency_id` int(10) unsigned NOT NULL DEFAULT '0',
@@ -162,6 +165,7 @@ class Brivium_Credits_Installer extends Brivium_BriviumHelper_Installer
 			  `amount` decimal(19,6) NOT NULL DEFAULT '0.000000',
 			  `negate` tinyint(1) unsigned NOT NULL DEFAULT '0',
 			  `message` text NOT NULL,
+			  `sensitive_data` text NOT NULL,
 			  `moderate` tinyint(3) unsigned NOT NULL DEFAULT '0',
 			  `is_revert` tinyint(3) unsigned NOT NULL DEFAULT '0',
 			  `transaction_state` varchar(30) NOT NULL,
@@ -180,7 +184,8 @@ class Brivium_Credits_Installer extends Brivium_BriviumHelper_Installer
 			  KEY `transaction_date` (`transaction_date`),
 			  KEY `action_moderate` (`action_id`,`moderate`),
 			  KEY `user_action` (`user_id`,`action_id`),
-			  KEY `transaction_action_currency` (`transaction_date`,`action_id`,`currency_id`)
+			  KEY `transaction_action_currency` (`transaction_date`,`action_id`,`currency_id`),
+			  KEY `transaction_key` (`transaction_key`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8
 		";
 		return $tables;
@@ -200,6 +205,7 @@ class Brivium_Credits_Installer extends Brivium_BriviumHelper_Installer
 			INSERT IGNORE INTO xf_content_type
 				(content_type, addon_id, fields)
 			VALUES
+				('brc_transaction', 'Brivium_Credits', ''),
 				('credit', 'Brivium_Credits', '');
 		";
 
@@ -207,6 +213,7 @@ class Brivium_Credits_Installer extends Brivium_BriviumHelper_Installer
 			INSERT IGNORE INTO `xf_content_type_field`
 				(`content_type`, `field_name`, `field_value`)
 			VALUES
+				('brc_transaction', 'alert_handler_class', 'Brivium_Credits_AlertHandler_Transaction'),
 				('credit', 'alert_handler_class', 'Brivium_Credits_AlertHandler_Credit'),
 				('credit', 'moderator_log_handler_class', 'Brivium_Credits_ModeratorLogHandler_UserCredit');
 		";
@@ -238,7 +245,11 @@ class Brivium_Credits_Installer extends Brivium_BriviumHelper_Installer
 				"moderate"		=> "tinyint(3) unsigned NOT NULL DEFAULT '0'",
 				'is_revert'	=>	" TINYINT( 3 ) UNSIGNED NOT NULL DEFAULT  '0'",
 			);
+		}else{
+			$alters["xf_brivium_credits_transaction"] = array();
 		}
+		$alters["xf_brivium_credits_transaction"]['sensitive_data'] = 'TEXT NOT NULL AFTER  `message`';
+		$alters["xf_brivium_credits_transaction"]['transaction_key'] = "VARBINARY(50) NOT NULL DEFAULT ''";
 		return $alters;
 	}
 
@@ -357,6 +368,12 @@ class Brivium_Credits_Installer extends Brivium_BriviumHelper_Installer
 					ADD KEY `user_action` (`user_id`,`action_id`);
 			";
 		}
+		if($this->_triggerType != "uninstall" && $this->_existingVersionId > 0 && $this->_existingVersionId < 2000371){
+			$query[] = "
+				ALTER TABLE  `xf_brivium_credits_transaction`
+					ADD KEY `transaction_key` (`transaction_key`);
+			";
+		}
 		return $query;
 	}
 
@@ -371,7 +388,7 @@ class Brivium_Credits_Installer extends Brivium_BriviumHelper_Installer
 				REPLACE INTO `xf_brivium_addon`
 					(`addon_id`, `title`, `version_id`, `copyright_removal`, `start_date`, `end_date`)
 				VALUES
-					('Brivium_Credits', 'Brivium - Credits Premium', '2000000', 0, 0, 0);
+					('Brivium_Credits', 'Brivium - Credits Premium', '2000871', 0, 0, 0);
 			";
 			$query[] = "
 				REPLACE INTO `xf_brivium_listener_class`

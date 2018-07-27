@@ -108,6 +108,128 @@ class Brivium_Credits_ControllerAdmin_Credit extends XenForo_ControllerAdmin_Abs
 		return $this->responseView('Brivium_Credits_ViewAdmin_Credits_Index', 'BRC_credits_index', $viewParams);
 	}
 
+	public function actionTopUsers()
+	{
+		$transactionModel = $this->_getTransactionModel();
+		$brcCurrencies = XenForo_Application::get('brcCurrencies');
+		$currencies = $brcCurrencies->getCurrencies();
+
+		$input = $this->_getFilterParams();
+
+		$dateInput = $this->_input->filter(array(
+			'start' => XenForo_Input::DATE_TIME,
+			'end' => XenForo_Input::DATE_TIME,
+		));
+
+		$transactionModel = $this->_getTransactionModel();
+
+		$moderate = $this->_input->filterSingle('moderate', XenForo_Input::UINT);
+
+		$pageParams = array();
+		if ($input['top_type'])
+		{
+			$pageParams['top_type'] = $input['top_type'];
+		}
+		if ($input['start'])
+		{
+			$pageParams['start'] = $input['start'];
+		}
+		if ($input['end'])
+		{
+			$pageParams['end'] = $input['end'];
+		}
+		if ($input['action_id'])
+		{
+			$pageParams['action_id'] = $input['action_id'];
+		}
+		if ($input['currency_id'])
+		{
+			$pageParams['currency_id'] = $input['currency_id'];
+		}
+
+		$currencyId = $input['currency_id'];
+		$actionId 	= $input['action_id'];
+		$topType 	= $input['top_type'];
+
+		$actionObj = XenForo_Application::get('brcActionHandler');
+		$actions = $actionObj->getActions();
+
+		$action = array();
+		if($actionId){
+			if(!empty($actions[$actionId])){
+				$action = $actions[$actionId];
+			}else{
+				return $this->responseError(new XenForo_Phrase('BRC_requested_action_not_found'));
+			}
+		}
+
+		$currency = array();
+		if($currencyId){
+			$currency = $brcCurrencies->$currencyId;
+		}else if($currencies){
+			$currency = reset($currencies);
+		}
+		if(!$currency){
+			return $this->responseError(new XenForo_Phrase('BRC_requested_currency_not_found'));
+		}
+		$currencyId = $currency['currency_id'];
+		$conditions = array(
+			'action_id' => $actionId,
+			'currency_id' => $currencyId,
+			'start' => $dateInput['start'],
+			'end' => $dateInput['end'],
+		);
+		$page = $this->_input->filterSingle('page', XenForo_Input::UINT);
+		$perPage = 50;
+
+		$fetchOptions = array(
+			'perPage' => $perPage,
+			'page' => $page,
+		);
+		if($topType=='earn' || !$topType){
+			$topType = 'earn';
+			$conditions['amount'] = array('>', 0);
+
+			$fetchOptions['orderDirection'] = 'DESC';
+			$topUsers = $transactionModel->getTopTransactions($conditions, $fetchOptions);
+		}else{
+			$conditions['amount'] = array('<', 0);
+		}
+		$topUsers = $transactionModel->getTopTransactions($conditions, $fetchOptions);
+		$totalCredits = 0;
+		foreach($topUsers AS $topUser){
+			$totalCredits += $topUser['credits'];
+		}
+
+		$total = $transactionModel->countTopTransactions($conditions);
+		$linkParams = array(
+			'currency_id' => $currency['currency_id'],
+			'action_id' => $actionId,
+			'top_type' => $topType,
+		);
+
+		$viewParams = array(
+			'currency' 		=> $currency,
+			'currencies' 	=> $currencies,
+			'topUsers' 		=> $topUsers,
+			'totalCredits' 		=> $totalCredits,
+			'actionId' 		=> $actionId,
+			'actions' 		=> $actions,
+			'topType' 		=> $topType,
+
+			'start' => $input['start'],
+			'end' => $input['end'],
+
+			'datePresets' => XenForo_Helper_Date::getDatePresets(),
+
+			'linkParams' 	=> $linkParams,
+			'page' 			=> $page,
+			'perPage' 	=> $perPage,
+			'total' 	=> $total,
+		);
+		return $this->responseView('Brivium_Credits_ViewAdmin_Credits_Index', 'BRC_credit_top_list', $viewParams);
+	}
+
 	public function actionListActions()
 	{
 		$this->assertAdminPermission('BRC_action');
@@ -509,6 +631,7 @@ class Brivium_Credits_ControllerAdmin_Credit extends XenForo_ControllerAdmin_Abs
 	protected function _getFilterParams()
 	{
 		return $this->_input->filter(array(
+			'top_type' => XenForo_Input::STRING,
 			'order' => XenForo_Input::STRING,
 			'action_id' => XenForo_Input::STRING,
 			'currency_id' => XenForo_Input::UINT,

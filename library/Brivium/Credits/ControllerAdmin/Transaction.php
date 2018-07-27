@@ -217,7 +217,6 @@ class Brivium_Credits_ControllerAdmin_Transaction extends XenForo_ControllerAdmi
 		return $this->responseView('Brivium_Credits_ViewAdmin_Credits_ViewTransaction', 'BRC_transaction_view', $viewParams);
 	}
 
-
 	public function actionSave()
 	{
 		$transactionId = $this->_input->filterSingle('transaction_id', XenForo_Input::UINT);
@@ -244,7 +243,7 @@ class Brivium_Credits_ControllerAdmin_Transaction extends XenForo_ControllerAdmi
 			if($transaction['user_id']==$visitor['user_id']){
 				$user = $visitor;
 			}else{
-				$user = $userModel->getUserById($transaction['user_id'], array('join'=> XenForo_Model_User::FETCH_USER_OPTION | XenForo_Model_User::FETCH_USER_PERMISSIONS));
+				$user = $this->getModelFromCache('XenForo_Model_User')->getUserById($transaction['user_id'], array('join'=> XenForo_Model_User::FETCH_USER_OPTION | XenForo_Model_User::FETCH_USER_PERMISSIONS));
 			}
 			if(XenForo_Model_Alert::userReceivesAlert($user, 'credits', $transaction['action_id'])){
 				$extraData = array(

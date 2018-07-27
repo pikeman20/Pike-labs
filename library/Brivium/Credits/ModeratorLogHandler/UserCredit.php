@@ -1,5 +1,6 @@
 <?php
 
+// Team NullXF
 class Brivium_Credits_ModeratorLogHandler_UserCredit extends XenForo_ModeratorLogHandler_Abstract
 {
 	protected function _log(array $logUser, array $content, $action, array $actionParams = array(), $parentContent = null)

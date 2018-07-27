@@ -1,5 +1,6 @@
 <?php
 
+// Team NullXF
 class Brivium_Credits_CacheRebuilder_CreditImport extends XenForo_CacheRebuilder_Abstract
 {
 	/**
@@ -57,7 +58,7 @@ class Brivium_Credits_CacheRebuilder_CreditImport extends XenForo_CacheRebuilder
 				return true;
 			}
 			if($input['currency_id']){
-				$currency = $brcCurrenciesObj->$input['currency_id'];
+				$currency = $brcCurrenciesObj->get($input['currency_id']);
 			}else{
 				return true;
 			}
@@ -79,7 +80,7 @@ class Brivium_Credits_CacheRebuilder_CreditImport extends XenForo_CacheRebuilder
 				if(empty($adCurrencies[$currencyId]) || empty($currencyOptions['currency_id'])){
 					continue;
 				}
-				$currency = $brcCurrenciesObj->$currencyOptions['currency_id'];
+				$currency = $brcCurrenciesObj->get($currencyOptions['currency_id']);
 
 				if(!$currency){
 					continue;
@@ -94,7 +95,7 @@ class Brivium_Credits_CacheRebuilder_CreditImport extends XenForo_CacheRebuilder
 
 		}else if($input['money_type']=='trophy_points'){
 			if($input['currency_id']){
-				$currency = $brcCurrenciesObj->$input['currency_id'];
+				$currency = $brcCurrenciesObj->get($input['currency_id']);
 			}else{
 				return true;
 			}
@@ -109,7 +110,7 @@ class Brivium_Credits_CacheRebuilder_CreditImport extends XenForo_CacheRebuilder
 				return true;
 			}
 			if($input['currency_id']){
-				$currency = $brcCurrenciesObj->$input['currency_id'];
+				$currency = $brcCurrenciesObj->get($input['currency_id']);
 			}else{
 				return true;
 			}

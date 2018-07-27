@@ -23,7 +23,7 @@ class Brivium_BriviumHelper_Model_ListenerClass extends XenForo_Model
 		}
 		return $addOns;
 	}
-	
+
 	public function rebuildBriviumAddOnsCache()
 	{
 		$addOns = $this->getAllBriviumAddOns();
@@ -31,7 +31,7 @@ class Brivium_BriviumHelper_Model_ListenerClass extends XenForo_Model
 		XenForo_Application::set('brBriviumAddOns', $addOns);
 		return $addOns;
 	}
-	
+
 	public function getAllListenerClassesForCache()
 	{
 		try
@@ -54,7 +54,7 @@ class Brivium_BriviumHelper_Model_ListenerClass extends XenForo_Model
 		catch (Zend_Db_Exception $e) {return array();}
 		return $fields;
 	}
-	
+
 	public function rebuildListenerClassCache()
 	{
 		$listenerClasses = $this->getAllListenerClassesForCache();
@@ -63,7 +63,7 @@ class Brivium_BriviumHelper_Model_ListenerClass extends XenForo_Model
 		XenForo_Application::set('brListenerClasses', $listenerClasses);
 		return $listenerClasses;
 	}
-	
+
 	public function getEventListenerArray()
 	{
 		$output = array();
@@ -89,9 +89,9 @@ class Brivium_BriviumHelper_Model_ListenerClass extends XenForo_Model
 			$listenerClasses = $this->getAllListenerClassesForCache();
 		}
 		$db = $this->_getDb();
-				
+
 		$events = $this->getEventListenerArray();
-		
+
 		$rows = array();
 		foreach($listenerClasses AS $eventId => &$listenerClass){
 			if(!empty($events[$eventId])){
@@ -99,15 +99,15 @@ class Brivium_BriviumHelper_Model_ListenerClass extends XenForo_Model
 				continue;
 			}
 			$class = 'Brivium_BriviumHelper_EventListeners';
-			
+
 			$method = str_replace(' ','',ucwords(strtolower(str_replace('_',' ',$eventId))));
 			$method = strtolower(substr($method, 0, 1)).substr($method, 1);
 			if (!XenForo_Application::autoload($class) || !method_exists($class, $method))
 			{
 				continue;
 			}
-			
-			$rows[] = '(' . $db->quote($eventId) 
+
+			$rows[] = '(' . $db->quote($eventId)
 			. ', 10 '
 			. ', ' . $db->quote($method)
 			. ', ' . $db->quote('Brivium_BriviumHelper_EventListeners')
@@ -115,7 +115,7 @@ class Brivium_BriviumHelper_Model_ListenerClass extends XenForo_Model
 			. ', 1 '
 			. ')';
 		}
-		
+
 		if($listenerClasses){
 			if(empty($events['init_dependencies']['initListenerClass'])){
 				$rows[] = "('init_dependencies', 10, '', 'Brivium_BriviumHelper_EventListeners', 'initListenerClass', 1)";
@@ -133,17 +133,17 @@ class Brivium_BriviumHelper_Model_ListenerClass extends XenForo_Model
 				unset($events['template_create']['initTemplateCreate']);
 			}
 		}
-		
+
 		if(!empty($rows)){
 			$rows = implode(' , ',$rows);
 			$db->query('
-				INSERT IGNORE INTO `xf_code_event_listener` 
-					(`event_id`, `execute_order`, `description`, `callback_class`, `callback_method`, `active`) 
+				INSERT IGNORE INTO `xf_code_event_listener`
+					(`event_id`, `execute_order`, `description`, `callback_class`, `callback_method`, `active`)
 				VALUES
 				'. $rows
 			);
 		}
-		
+
 		foreach($events AS $eventId => $event){
 			if(!empty($event) && is_array($event)){
 				$db->delete('xf_code_event_listener', 'event_listener_id IN (' . $db->quote($event).')');

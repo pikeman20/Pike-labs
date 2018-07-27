@@ -45,6 +45,7 @@ class Brivium_Credits_Model_Action extends XenForo_Model
 			if($action['edit_template']=='BRC_action_edit_default'){
 				$action['edit_template'] = '';
 			}
+			$action['edit_template'] = str_replace('BRC_action_edit_template_', '', $action['edit_template']);
 			XenForo_Helper_DevelopmentXml::createDomElements($actionNode, array(
 				'addon_id' => $action['addon_id'],
 				'template' => $action['edit_template'],

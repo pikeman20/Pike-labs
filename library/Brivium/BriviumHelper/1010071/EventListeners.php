@@ -2,7 +2,6 @@
 
 /**
  * Helper Brivium Addon for EventListener.
- *
  * @package Brivium_BriviumHelper
  * Version 1.0.1
  */
@@ -21,14 +20,14 @@ class Brivium_BriviumHelper_EventListeners
 	public static $listenerClasses = null;
 	public static $briviumAddOns = null;
 	public static $addOns = null;
-	
+
 	/**
 	 * Array to cache model objects
 	 *
 	 * @var array
 	 */
 	protected static $_modelCache = array();
-	
+
 	public static function initListenerClass(XenForo_Dependencies_Abstract $dependencies, array $data)
 	{
 		$cacheData = self::getModelFromCache('XenForo_Model_DataRegistry')->getMulti(array('brListenerClasses', 'brBriviumAddOns'));
@@ -49,12 +48,12 @@ class Brivium_BriviumHelper_EventListeners
 		}
 		XenForo_Application::set('brListenerClasses', self::$listenerClasses);
 	}
-	
+
 	public static function loadClassExtend($classType, $class, &$extend)
 	{
 		if(
 			!empty(self::$listenerClasses) &&
-			!empty(self::$listenerClasses[$classType][$class]) && 
+			!empty(self::$listenerClasses[$classType][$class]) &&
 			is_array(self::$listenerClasses[$classType][$class])
 		)
 		{
@@ -70,74 +69,73 @@ class Brivium_BriviumHelper_EventListeners
 			$extend = array_unique($extend);
 		}
 	}
-	
+
 	public static function loadClass($class, &$extend)
 	{
 		$classType = 'load_class';
 		self::loadClassExtend($classType, $class, $extend);
 	}
-	
+
 	public static function loadClassBbCode($class, &$extend)
 	{
 		$classType = 'load_class_bb_code';
 		self::loadClassExtend($classType, $class, $extend);
 	}
-	
+
 	public static function loadClassController($class, &$extend)
 	{
 		$classType = 'load_class_controller';
 		self::loadClassExtend($classType, $class, $extend);
 	}
-	
+
 	public static function loadClassDatawriter($class, &$extend)
 	{
 		$classType = 'load_class_datawriter';
 		self::loadClassExtend($classType, $class, $extend);
 	}
-	
+
 	public static function loadClassImporter($class, &$extend)
 	{
 		$classType = 'load_class_importer';
 		self::loadClassExtend($classType, $class, $extend);
 	}
-	
+
 	public static function loadClassMail($class, &$extend)
 	{
 		$classType = 'load_class_mail';
 		self::loadClassExtend($classType, $class, $extend);
 	}
-	
+
 	public static function loadClassModel($class, &$extend)
 	{
 		$classType = 'load_class_model';
 		self::loadClassExtend($classType, $class, $extend);
 	}
-	
+
 	public static function loadClassRoutePrefix($class, &$extend)
 	{
 		$classType = 'load_class_route_prefix';
 		self::loadClassExtend($classType, $class, $extend);
 	}
-	
+
 	public static function loadClassSearchData($class, &$extend)
 	{
 		$classType = 'load_class_search_data';
 		self::loadClassExtend($classType, $class, $extend);
 	}
-	
+
 	public static function loadClassView($class, &$extend)
 	{
 		$classType = 'load_class_view';
 		self::loadClassExtend($classType, $class, $extend);
 	}
-	
+
 	protected static function _setCopyrightNotice($copyrightNotice = ''){
 		self::$_copyrightNotice = (string) '';
 	}
-	
-	
+
 	protected static $_needCopyright = null;
-	
+
 	protected static function _checkCopyrightRequire(){
 		if(self::$_needCopyright===null){
 			self::$_needCopyright = false;
@@ -150,10 +148,11 @@ class Brivium_BriviumHelper_EventListeners
 		}
 		return self::$_needCopyright;
 	}
-	
+
 	public static function _setTemplateCreate()
     {
 	}
+
 	public static function initTemplateCreate(&$templateName, array &$params, XenForo_Template_Abstract $template)
     {
 		if(!empty(self::$_templateList)){
@@ -188,6 +187,7 @@ class Brivium_BriviumHelper_EventListeners
 			self::$_templateList = $templateList;
 		}
 	}
+
 	public static function initTemplateHook($hookName, &$contents, array $hookParams, XenForo_Template_Abstract $template)
     {
 		if(self::$setCopyright) return;
@@ -216,8 +216,7 @@ class Brivium_BriviumHelper_EventListeners
 	public static function _templateHook($hookName, &$contents, array $hookParams, XenForo_Template_Abstract $template)
     {
     }
-	
-	
+
 	/**
 	 * Fetches a model object from the local cache
 	 *
@@ -233,5 +232,4 @@ class Brivium_BriviumHelper_EventListeners
 		}
 		return self::$_modelCache[$modelName];
 	}
-	
 }

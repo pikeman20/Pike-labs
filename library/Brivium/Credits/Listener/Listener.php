@@ -12,6 +12,11 @@ class Brivium_Credits_Listener_Listener extends Brivium_BriviumHelper_EventListe
 
 	protected static $_listenerClasses = null;
 
+	public static function brsaApiHandler(array &$actions)
+	{
+		$actions['credit'] = 'Brivium_Credits_ApiHandler_Credit';
+	}
+
 	public static function initDependencies(XenForo_Dependencies_Abstract $dependencies, array $data)
 	{
 		if ($dependencies instanceof XenForo_Dependencies_Admin)
@@ -46,7 +51,7 @@ class Brivium_Credits_Listener_Listener extends Brivium_BriviumHelper_EventListe
 		$actionObj = new Brivium_Credits_Action($dependencies);
 		$actionObj->setEvents($events);
 		self::$_listenerClasses = $actionObj->getExtendedClasses();
-		XenForo_Application::set('brcActionHandler',$actionObj);
+		XenForo_Application::set('brcActionHandler', $actionObj);
 
 		// avoid error
 		XenForo_Application::set('brcEvents', new Brivium_Credits_Events(array()));

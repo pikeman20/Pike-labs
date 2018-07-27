@@ -29,6 +29,8 @@ class Brivium_Credits_Model_Credit extends XenForo_Model
 			$this->_defaultData = array(
 				// User is associated with this event of $user ( default System = 0 )  (int)
 				'user_action_id' 		=>	0,
+
+				'transaction_key' 		=>	0,
 				// User for trigger action
 				'user' 					=>	array(),
 				// User trigger
@@ -227,16 +229,17 @@ class Brivium_Credits_Model_Credit extends XenForo_Model
 	public function addUserTransaction($actionId, $eventId, $user, $triggerUser,
 		$contentId, $contentType, $transactionDate,
 		$amount, $currency, $multiplier, $message,
-		$moderate, $transactionState, $extraData,$alert, $updateUser = false)
+		$moderate, $transactionState, $extraData, $alert, $updateUser = false)
 	{
-		//prd($data);
+		$sensitiveData = !empty($extraData['sensitive_data'])?$extraData['sensitive_data']:'';
+		unset($extraData['sensitive_data']);
 		$db = $this->_getDb();
 
 		$this->insertIntoTransaction(
 			$actionId, $eventId, $currency['currency_id'],
 			$user['user_id'], $triggerUser['user_id'], $contentId, $contentType,
 			$transactionDate, $amount, $multiplier,
-			$message, $moderate, $transactionState, $extraData
+			$message, $sensitiveData, $moderate, $transactionState, $extraData
 		);
 		if($alert){
 			$this->insertIntoAlert($user['user_id'], $triggerUser['user_id'], $triggerUser['username'], $eventId, $actionId, $transactionDate, $extraData);
@@ -254,7 +257,9 @@ class Brivium_Credits_Model_Credit extends XenForo_Model
 				$this->_userCreditChanges[$actionId]['earn'] += $amount;
 			}
 
-			if($currency['negative_handle']=='reset' && ($user[$currency['column']] + $amount < 0))$amount = -$user[$currency['column']];
+			if($currency['negative_handle']=='reset' && ($user[$currency['column']] + $amount < 0)){
+				$amount = -$user[$currency['column']];
+			}
 			$this->updateUserCredits($user['user_id'],$amount,$currency['column']);
 		}
 
@@ -309,15 +314,21 @@ class Brivium_Credits_Model_Credit extends XenForo_Model
 		$actionId, $eventId, $currencyId,
 		$userId, $triggerUserId, $contentId, $contentType,
 		$transactionDate, $amount, $multiplier,
-		$message, $moderate, $transactionState, $extraData
+		$message, $sensitiveData, $moderate, $transactionState, $extraData
 	)
 	{
+		$transactionKey = '';
+		if(!empty($extraData['transaction_key'])){
+			$transactionKey = $extraData['transaction_key'];
+		}
 		if(isset($extraData)){
 			$extraData = serialize($extraData);
 		}
+
 		$db = $this->_getDb();
 
 		$row = '(' . $db->quote($actionId)
+			. ', ' . $db->quote($transactionKey)
 			. ', ' . $db->quote(intval($eventId))
 			. ', ' . $db->quote(intval($currencyId))
 			. ', ' . $db->quote(intval($userId))
@@ -329,6 +340,7 @@ class Brivium_Credits_Model_Credit extends XenForo_Model
 			. ', ' . $db->quote($amount) . ', ' . $db->quote($multiplier)
 			. ', 0' //. $db->quote($negate)
 			. ', ' . $db->quote($message)
+			. ', ' . $db->quote($sensitiveData)
 			. ', ' . $db->quote(intval($moderate))
 			. ', 0' //. $db->quote(intval($reverted))
 			. ', ' . $db->quote($transactionState)
@@ -365,9 +377,9 @@ class Brivium_Credits_Model_Credit extends XenForo_Model
 		}
 		$this->_getDb()->query('
 			INSERT INTO xf_brivium_credits_transaction
-				(action_id, event_id, currency_id, user_id, user_action_id,
+				(action_id, transaction_key, event_id, currency_id, user_id, user_action_id,
 				content_id, content_type, owner_id, transaction_date,
-				amount, multiplier, negate, message, moderate,
+				amount, multiplier, negate, message, sensitive_data, moderate,
 				is_revert, transaction_state, extra_data)
 			VALUES
 				' . $record
@@ -711,6 +723,18 @@ class Brivium_Credits_Model_Credit extends XenForo_Model
 		$this->standardizeViewingUserReference($viewingUser);
 
 		if (XenForo_Permission::hasPermission($viewingUser['permissions'], 'BR_CreditsPermission', 'useCredits'))
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	public function canViewSensitiveData(&$errorPhraseKey = '', array $viewingUser = null)
+	{
+		$this->standardizeViewingUserReference($viewingUser);
+
+		if (XenForo_Permission::hasPermission($viewingUser['permissions'], 'BR_CreditsPermission', 'viewSensitiveData'))
 		{
 			return true;
 		}

@@ -78,16 +78,6 @@ abstract class Brivium_Credits_ActionHandler_Abstract
 		return true;
 	}
 
-	public function getAllowMultipleEvent()
-	{
- 		return $this->_allowMultipleEvent;
-	}
-
-	public function getAddOnId()
-	{
- 		return $this->_addOnId;
-	}
-
 	public function triggerEvent($event, $user, array $triggerData = array(), &$errorString='', &$isBreak=false)
 	{
 		$action = $this->getAction();
@@ -116,7 +106,7 @@ abstract class Brivium_Credits_ActionHandler_Abstract
 
 		$eventId = $event['event_id'];
 		$actionId = $action['action_id'];
-		$currency = $currencyObj->$event['currency_id'];
+		$currency = $currencyObj->get($event['currency_id']);
 		// check event is actived
 		if(empty($currency['active']))
 		{
@@ -161,8 +151,17 @@ abstract class Brivium_Credits_ActionHandler_Abstract
 			}else if($event['extra_min_handle']==2){
 				$errorString = new XenForo_Phrase('BRC_below_minimum_handling');
 				return false;
-			}else if($event['extra_min_handle']==3){
-				$errorMinimumHandle->setParams(array('min'=>$event['extra_min']));
+			}else if($event['extra_min_handle']==3)
+			{
+				$errorMinimumHandle = $triggerData['errorMinimumHandle'];
+				if(!$errorMinimumHandle || !$errorMinimumHandle instanceof XenForo_Phrase){
+					$errorMinimumHandle = new XenForo_Phrase('BRC_below_minimum_handling');;
+				}else{
+					if($event['extra_min']%1==0){
+						$event['extra_min'] = intval($event['extra_min']);
+					}
+					$errorMinimumHandle->setParams(array('min'=>$event['extra_min']));
+				}
 				if(!$triggerData['is_bulk']){
 					throw new XenForo_Exception($errorMinimumHandle, true);
 				}else{
@@ -173,7 +172,7 @@ abstract class Brivium_Credits_ActionHandler_Abstract
 		}
 
 		if($event['extra_max'] && $multiplier > $event['extra_max']){
-			$multiplier = $multiplier - $event['extra_max'];
+			$multiplier = $event['extra_max'];
 		}
 		if(!$amountUpdate){
 			$errorString = new XenForo_Phrase('BRC_not_valid_amount');
@@ -208,11 +207,10 @@ abstract class Brivium_Credits_ActionHandler_Abstract
 						'event_id' => $eventId,
 						'start' => ($now - $maxTime),
 						'user_action_id' => $userAction['user_id'],
-						'amount' => array('=', $amountUpdate),
 					);
 					$maxTimes = $creditModel->countEventsTriggerByUser($actionId, $userId, $conditions);
 					if($maxTimes >= $applyMax){
-						$errorString = new XenForo_Phrase('BRC_you_trigger_this_action_x_times_in_period_of_time_for_y', array('time' => $applyMax, 'event'=>$action['title']));
+						$errorString = new XenForo_Phrase('BRC_you_trigger_x_times_in_period_of_time_for_y', array('time' => $applyMax, 'event'=>$action['title']));
 						return false;
 					}
 				}
@@ -222,10 +220,9 @@ abstract class Brivium_Credits_ActionHandler_Abstract
 				'event_id' => $eventId,
 				'start' => $dayStartTimestamps['today'],
 				'user_action_id' => $userAction['user_id'],
-				'amount' => array('=', $amountUpdate),
 			);
 			if($times > 0 && $times <= $creditModel->countEventsTriggerByUser($actionId, $userId, $conditions)){
-				$errorString = new XenForo_Phrase('BRC_you_can_trigger_this_action_x_times_per_day_for_y',array('time'=>$times, 'event'=>$action['title']));
+				$errorString = new XenForo_Phrase('BRC_you_can_trigger_x_times_per_day_for_y',array('time'=>$times, 'event'=>$action['title']));
 				return false;
 			}
 		}
@@ -238,7 +235,7 @@ abstract class Brivium_Credits_ActionHandler_Abstract
 		if(empty($triggerData['ignore_permission']) && XenForo_Model_Alert::userReceivesAlert($user, 'credits', $actionId) && $event['alert']){
 			$alert = true;
 		}
-		$creditModel->addUserTransaction(
+		$this->_addUserTransaction(
 			$event['action_id'], $eventId, $user, $triggerData['user_action'],
 			$triggerData['content_id'], $triggerData['content_type'], $now,
 			$amountUpdate, $currency, $multiplier,
@@ -246,6 +243,18 @@ abstract class Brivium_Credits_ActionHandler_Abstract
 			$alert, $triggerData['updateUser']
 		);
 		return true;
+	}
+
+	protected function _addUserTransaction($actionId, $eventId, $user, $triggerUser,
+		$contentId, $contentType, $transactionDate,
+		$amount, $currency, $multiplier, $message,
+		$moderate, $transactionState, $extraData,$alert, $updateUser = false)
+	{
+		$this->_getCreditModel()->addUserTransaction($actionId, $eventId, $user, $triggerUser,
+		$contentId, $contentType, $transactionDate,
+		$amount, $currency, $multiplier, $message,
+		$moderate, $transactionState, $extraData,$alert, $updateUser
+		);
 	}
 
 	public function prepareTriggerData($event, &$user, $currency, &$triggerData, &$errorString)
@@ -256,6 +265,16 @@ abstract class Brivium_Credits_ActionHandler_Abstract
 	public function processUpdateAmount($currencyId, $amount, &$user)
 	{
  		return $amount;
+	}
+
+	public function getAllowMultipleEvent()
+	{
+ 		return $this->_allowMultipleEvent;
+	}
+
+	public function getAddOnId()
+	{
+ 		return $this->_addOnId;
 	}
 
 	public function getAddOnTitle()
@@ -303,11 +322,13 @@ abstract class Brivium_Credits_ActionHandler_Abstract
 		if(empty($user['user_id'])){
 			$user = XenForo_Visitor::getInstance()->toArray();
 		}
+
 		$check = $event['event_id'];
 		if(empty($event['currency_id'])){
 			return false;
 		}
-		$currency = XenForo_Application::get('brcCurrencies')->$event['currency_id'];
+
+		$currency = XenForo_Application::get('brcCurrencies')->get($event['currency_id']);
 		if(empty($event['active']) && empty($currency['active']))
 		{
 			return false;

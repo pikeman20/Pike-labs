@@ -40,6 +40,18 @@ class Brivium_Credits_Model_Transaction extends XenForo_Model
 		',$transactionId);
 	}
 
+	public function getTransactionByKey($transactionKey, $fetchOptions = array()){
+		$joinOptions = $this->prepareTransactionFetchOptions($fetchOptions);
+		return $this->_getDb()->fetchRow('
+			SELECT transaction.*
+			' .$joinOptions['selectFields']. '
+			FROM xf_brivium_credits_transaction AS transaction
+			' .$joinOptions['joinTables']. '
+			WHERE transaction.transaction_key = ?
+			LIMIT 0,1
+		',$transactionKey);
+	}
+
 	/**
 	*	Gets multi transactions.
 	*
@@ -130,6 +142,10 @@ class Brivium_Credits_Model_Transaction extends XenForo_Model
 		if (!empty($conditions['action_id']))
 		{
 			$sqlConditions[] = 'transaction.action_id = ' . $db->quote($conditions['action_id']);
+		}
+		if (!empty($conditions['transaction_key']))
+		{
+			$sqlConditions[] = 'transaction.transaction_key = ' . $db->quote($conditions['transaction_key']);
 		}
 		if (!empty($conditions['content_id']))
 		{
@@ -325,36 +341,44 @@ class Brivium_Credits_Model_Transaction extends XenForo_Model
 		);
 	}
 
-	public function getTopSpentTransactions(array $conditions, array $fetchOptions = array())
+	public function getTopTransactions(array $conditions, array $fetchOptions = array())
 	{
 		$whereConditions = $this->prepareTransactionConditions($conditions, $fetchOptions);
 		$limitOptions = $this->prepareLimitFetchOptions($fetchOptions);
-		return $this->fetchAllKeyed($this->limitQueryResults(			'
-				SELECT transaction.user_id, user_create.username, SUM(transaction.amount) AS credits
+		if(!empty($fetchOptions['orderDirection']) && $fetchOptions['orderDirection']=='DESC'){
+			$direction = 'DESC';
+		}else{
+			$direction = 'ASC';
+		}
+		return $this->fetchAllKeyed($this->limitQueryResults('
+				SELECT transaction.user_id, user_create.username, user_create.avatar_date, SUM(transaction.amount) AS credits
 				FROM xf_brivium_credits_transaction AS transaction
 					LEFT JOIN xf_user AS user_create ON
 						(user_create.user_id = transaction.user_id)
-				WHERE ' . $whereConditions . ' AND transaction.amount < 0
+				WHERE ' . $whereConditions . '
 				GROUP BY transaction.user_id
-				ORDER BY credits ASC
+				ORDER BY credits '. $direction .'
 			', $limitOptions['limit'], $limitOptions['offset']
 		), 'user_id');
 	}
 
-	public function getTopEarnedTransactions(array $conditions, array $fetchOptions = array())
+	public function countTopTransactions(array $conditions)
 	{
-		$whereConditions = $this->prepareTransactionConditions($conditions, $fetchOptions);
-		$limitOptions = $this->prepareLimitFetchOptions($fetchOptions);
-		return $this->fetchAllKeyed($this->limitQueryResults(			'
-				SELECT transaction.user_id, user_create.username, SUM(transaction.amount) AS credits
-				FROM xf_brivium_credits_transaction AS transaction
-					LEFT JOIN xf_user AS user_create ON
-						(user_create.user_id = transaction.user_id)
-				WHERE ' . $whereConditions . ' AND transaction.amount > 0
-				GROUP BY transaction.user_id
-				ORDER BY credits DESC
-			', $limitOptions['limit'], $limitOptions['offset']
-		), 'user_id');
+		$fetchOptions = array();
+		$whereClause = $this->prepareTransactionConditions($conditions, $fetchOptions);
+
+		$joinOptions = $this->prepareTransactionFetchOptions($fetchOptions);
+
+		return $this->_getDb()->fetchOne('
+			SELECT COUNT(*)
+			FROM xf_brivium_credits_transaction AS transaction
+				LEFT JOIN xf_user AS user_create ON
+					(user_create.user_id = transaction.user_id)
+			WHERE ' . $whereClause . '
+			GROUP BY transaction.user_id
+			ORDER BY credits ASC
+			LIMIT 0,1'
+		);
 	}
 
 	public function prepareTransactions(array $transactions)

@@ -233,15 +233,13 @@ class Brivium_Credits_Action
 			if(empty($this->_actionHandlers[$actionId]) && !in_array($actionId, $disableActions)){
 				try
 				{
-					if (!$handlerClass || !class_exists($handlerClass))
+					if ($handlerClass && class_exists($handlerClass))
 					{
-						continue;
-					}
-
-					$handlerClass = XenForo_Application::resolveDynamicClass($handlerClass);
-					$handler = new $handlerClass();
-					if($handler && $handler->canUseAction()){
-						$this->_actionHandlers[$actionId] = $handler;
+						$handlerClass = XenForo_Application::resolveDynamicClass($handlerClass);
+						$handler = new $handlerClass();
+						if($handler && $handler->canUseAction()){
+							$this->_actionHandlers[$actionId] = $handler;
+						}
 					}
 				}
 				catch (Exception $e) {}

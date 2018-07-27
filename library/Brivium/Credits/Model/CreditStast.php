@@ -106,6 +106,16 @@ class Brivium_Credits_Model_CreditStast extends XenForo_Model
 		", array($actionId, $earn, $spend, $startDate, $statsDate, $currencyId, $statsType));
 	}
 
+	public function updateTransactionCreditStasts($actionId, $currencyId, $earn, $spend, $transactionDate)
+	{
+		$this->_getDb()->query("
+			UPDATE xf_brivium_credits_stats
+			SET `total_earn` = IF(`total_earn` - ?, `total_earn` - ?, 0),
+				`total_spend` = IF(`total_spend` - ?, `total_spend` - ?, 0)
+			WHERE stats_date > ? AND action_id = ? AND currency_id = ?
+		", array($earn, $earn, $spend, $spend, $transactionDate, $actionId, $currencyId));
+	}
+
 	public function updateCreditStasts()
 	{
 		$db = $this->_getDb();

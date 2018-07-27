@@ -1,4 +1,6 @@
 <?php
+
+// Team NullXF
 class Brivium_Credits_Listener_Helpers extends XenForo_Template_Helper_Core
 {
 	public static function helperCurrencyFormat($amount,$negate=false,$currencyId = null,$rich=true)

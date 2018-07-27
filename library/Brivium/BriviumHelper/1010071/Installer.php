@@ -2,8 +2,7 @@
 
 /**
  * Helper Brivium Addon for EventListener.
- *
- * @package Brivium_BriviumHelper
+ ** @package Brivium_BriviumHelper
  * Version 1.1.0
  */
 abstract class Brivium_BriviumHelper_Installer
@@ -28,7 +27,7 @@ abstract class Brivium_BriviumHelper_Installer
 	protected $_installHash = null;
 	protected $_installerType = 0;
 	protected static $_addOnInstaller = null;
-	
+
 	protected function _getDb()
 	{
 		if($this->_db === null){
@@ -36,31 +35,31 @@ abstract class Brivium_BriviumHelper_Installer
 		}
 		return $this->_db;
 	}
-	
+
 	public function getAddOnToInstall()
 	{
 		return $this->_addOnToInstall;
 	}
-	
+
 	public function getExistingAddOn()
 	{
 		return $this->_existingAddOn;
 	}
-	
+
 	public function addColumn($table, $field, $attr)
 	{
 		if(!$this->checkIfExist($table, $field)){
 			return $this->_getDb()->query("ALTER TABLE `" . $table . "` ADD `" . $field . "` " . $attr);
 		}
 	}
-	
+
 	public function removeColumn($table, $field)
 	{
 		if($this->checkIfExist($table, $field)){
 			return $this->_getDb()->query("ALTER TABLE `" . $table . "` DROP `" . $field . "`");
 		}
 	}
-	
+
 	public function checkIfExist($table, $field)
 	{
 		if($this->_getDb()->fetchRow('SHOW columns FROM `' . $table . '` WHERE Field = ?', $field)){
@@ -70,7 +69,7 @@ abstract class Brivium_BriviumHelper_Installer
 			return false;
 		}
 	}
-	
+
 	public function checkTableExist($table)
 	{
 		if($this->_getDb()->fetchRow('SHOW TABLES  LIKE ?', $table)){
@@ -80,7 +79,7 @@ abstract class Brivium_BriviumHelper_Installer
 			return false;
 		}
 	}
-	
+
 	public function initialize($existingAddOn = array(), $addOnToInstall = array(), $triggerType = 'install')
 	{
 		$this->_triggerType = $triggerType;
@@ -88,14 +87,14 @@ abstract class Brivium_BriviumHelper_Installer
 		$this->_addOnToInstall = $addOnToInstall;
 		$this->_versionId = !empty($addOnToInstall['version_id'])?$addOnToInstall['version_id']:0;
 		$this->_existingVersionId = !empty($existingAddOn['version_id'])?$existingAddOn['version_id']:0;
-		
+
 		if($triggerType=='install' && !$existingAddOn && $this->_installerType==1){
-			$this->_initData();
+			$this->_checkLicense();
 		}else{
 			$this->_initData();
 		}
 	}
-	
+
 	/*
 	*
 	*	Installer
@@ -104,8 +103,8 @@ abstract class Brivium_BriviumHelper_Installer
 	public function installAddOn($existingAddOn, $addOnToInstall)
 	{
 		$this->initialize($existingAddOn, $addOnToInstall);
-		
-		$this->preInstall();		
+
+		$this->preInstall();
 
 		$this->_beginDbTransaction();
 
@@ -132,7 +131,7 @@ abstract class Brivium_BriviumHelper_Installer
 
 		$this->_preInstallCalled = true;
 	}
-	
+
 	protected function _preInstallDefaults()
 	{
 	}
@@ -140,7 +139,7 @@ abstract class Brivium_BriviumHelper_Installer
 	protected function _preInstall()
 	{
 	}
-	
+
 	protected function _install()
 	{
 		$requiredAddOns = $this->_getPrerequisites();
@@ -148,7 +147,7 @@ abstract class Brivium_BriviumHelper_Installer
 			$this->_checkRequiredAddOns($requiredAddOns);
 		}
 		$db = $this->_getDb();
-		
+
 		if($this->_queryBeforeTable!==null && is_array($this->_queryBeforeTable)){
 			foreach ($this->_queryBeforeTable AS $queryBeforeTable)
 			{
@@ -159,7 +158,7 @@ abstract class Brivium_BriviumHelper_Installer
 				catch (Zend_Db_Exception $e){}
 			}
 		}
-		
+
 		if($this->_tables!==null && is_array($this->_tables)){
 			foreach ($this->_tables AS $tableSql)
 			{
@@ -170,8 +169,7 @@ abstract class Brivium_BriviumHelper_Installer
 				catch (Zend_Db_Exception $e){}
 			}
 		}
-		
-		
+
 		if($this->_queryBeforeAlter!==null && is_array($this->_queryBeforeAlter)){
 			foreach ($this->_queryBeforeAlter AS $queryBeforeAlter)
 			{
@@ -182,7 +180,7 @@ abstract class Brivium_BriviumHelper_Installer
 				catch (Zend_Db_Exception $e){}
 			}
 		}
-		
+
 		if($this->_alters!==null && is_array($this->_alters)){
 			foreach ($this->_alters AS $tableName => $tableAlters)
 			{
@@ -198,8 +196,7 @@ abstract class Brivium_BriviumHelper_Installer
 				}
 			}
 		}
-		
-		
+
 		if($this->_queryBeforeData!==null && is_array($this->_queryBeforeData)){
 			foreach ($this->_queryBeforeData AS $queryBeforeData)
 			{
@@ -210,7 +207,7 @@ abstract class Brivium_BriviumHelper_Installer
 				catch (Zend_Db_Exception $e){}
 			}
 		}
-		
+
 		if($this->_data!==null && is_array($this->_data)){
 			foreach ($this->_data AS $dataSql)
 			{
@@ -221,7 +218,7 @@ abstract class Brivium_BriviumHelper_Installer
 				catch (Zend_Db_Exception $e){}
 			}
 		}
-		
+
 		if($this->_queryFinal!==null && is_array($this->_queryFinal)){
 			foreach ($this->_queryFinal AS $queryFinal)
 			{
@@ -232,6 +229,7 @@ abstract class Brivium_BriviumHelper_Installer
 				catch (Zend_Db_Exception $e){}
 			}
 		}
+
 		$listenerClassModel = $this->getModelFromCache('Brivium_BriviumHelper_Model_ListenerClass');
 		$listenerClassModel->rebuildBriviumAddOnsCache();
 		$listenerClassModel->rebuildListenerClassCache();
@@ -244,13 +242,13 @@ abstract class Brivium_BriviumHelper_Installer
 	protected function _postInstallAfterTransaction()
 	{
 	}
-	
+
 	/*
 	*
 	*	Uninstaller
 	*
 	*/
-	
+
 	public static function uninstall($addOnToInstall)
 	{
 		if(self::$_addOnInstaller && class_exists(self::$_addOnInstaller))
@@ -259,7 +257,7 @@ abstract class Brivium_BriviumHelper_Installer
 			$installer->uninstallAddOn($addOnToInstall);
 		}
 	}
-	
+
 	public function uninstallAddOn($addOnToInstall)
 	{
 		$this->initialize(array(), $addOnToInstall, 'uninstall');
@@ -269,7 +267,7 @@ abstract class Brivium_BriviumHelper_Installer
 
 		$this->_uninstall();
 		$this->_postUninstall();
-		
+
 		$this->_commitDbTransaction();
 
 		return true;
@@ -294,7 +292,7 @@ abstract class Brivium_BriviumHelper_Installer
 	protected function _uninstall()
 	{
 		$db = $this->_getDb();
-		
+
 		if($this->_queryBeforeTable!==null && is_array($this->_queryBeforeTable)){
 			foreach ($this->_queryBeforeTable AS $queryBeforeTable)
 			{
@@ -305,7 +303,7 @@ abstract class Brivium_BriviumHelper_Installer
 				catch (Zend_Db_Exception $e){}
 			}
 		}
-		
+
 		if($this->_tables!==null && is_array($this->_tables)){
 			foreach ($this->_tables AS $tableName => $tableSql)
 			{
@@ -316,7 +314,7 @@ abstract class Brivium_BriviumHelper_Installer
 				catch (Zend_Db_Exception $e){}
 			}
 		}
-		
+
 		if($this->_queryBeforeAlter!==null && is_array($this->_queryBeforeAlter)){
 			foreach ($this->_queryBeforeAlter AS $queryBeforeAlter)
 			{
@@ -327,7 +325,7 @@ abstract class Brivium_BriviumHelper_Installer
 				catch (Zend_Db_Exception $e){}
 			}
 		}
-		
+
 		if($this->_alters!==null && is_array($this->_alters)){
 			foreach ($this->_alters AS $tableName => $tableAlters)
 			{
@@ -343,7 +341,7 @@ abstract class Brivium_BriviumHelper_Installer
 				}
 			}
 		}
-		
+
 		if($this->_queryFinal!==null && is_array($this->_queryFinal)){
 			foreach ($this->_queryFinal AS $queryFinal)
 			{
@@ -361,7 +359,7 @@ abstract class Brivium_BriviumHelper_Installer
 			$this->removeTables();
 		}
 	}
-	
+
 	public function removeTables()
 	{
 		$db = $this->_getDb();
@@ -378,16 +376,14 @@ abstract class Brivium_BriviumHelper_Installer
 			catch (Zend_Db_Exception $e){}
 		}
 	}
-	
+
 	/**
 	* Method designed to be overridden by child classes to add pre-uninstall behaviors.
 	*/
 	protected function _postUninstall()
 	{
 	}
-	
-	protected $_lcUrl = '';
-	
+
 	protected function _initData()
 	{
 		$this->_tables 			= $this->getDefaultTables($this->getTables());
@@ -398,12 +394,25 @@ abstract class Brivium_BriviumHelper_Installer
 		$this->_queryBeforeData = $this->getQueryBeforeData();
 		$this->_queryFinal 		= $this->getQueryFinal();
 	}
-	
+
+	protected function _checkLicense()
+	{
+		if(!$response = $this->_validateLicense($errorString))
+		{
+			$this->_initData();
+		}
+	}
+
+	protected function _validateLicense(&$errorString)
+	{
+		$addOnToInstall = $this->getAddOnToInstall();
+	}
+
 	protected function _getPrerequisites()
 	{
 		return array();
 	}
-	
+
 	protected function _checkRequiredAddOns(array $requiredAddOns)
 	{
 		$notInstalled = array();
@@ -459,7 +468,7 @@ abstract class Brivium_BriviumHelper_Installer
 			throw new XenForo_Exception(implode("<br />", $requiredMessage), true);
 		}
 	}
-	
+
 	protected function _beginDbTransaction()
 	{
 		XenForo_Db::beginTransaction($this->_db);
@@ -479,37 +488,37 @@ abstract class Brivium_BriviumHelper_Installer
 	{
 		return array();
 	}
-	
+
 	public function getAlters()
 	{
 		return array();
-	}	
-	
+	}
+
 	public function getData()
 	{
 		return array();
 	}
-	
+
 	public function getQueryBeforeTable()
 	{
 		return array();
 	}
-	
+
 	public function getQueryBeforeAlter()
 	{
 		return array();
 	}
-	
+
 	public function getQueryBeforeData()
 	{
 		return array();
 	}
-	
+
 	public function getQueryFinal()
 	{
 		return array();
 	}
-	
+
 	public function getDefaultTables($tables = array())
 	{
 		if($this->_triggerType != 'uninstall'){
@@ -536,7 +545,7 @@ abstract class Brivium_BriviumHelper_Installer
 		}
 		return $tables;
 	}
-	
+
 	public function getModelFromCache($class)
     {
         if(!isset($this->_modelCache[$class])){
@@ -545,7 +554,7 @@ abstract class Brivium_BriviumHelper_Installer
 
         return $this->_modelCache[$class];
     }
-	
+
 	public static function create($class)
 	{
 		$createClass = XenForo_Application::resolveDynamicClass($class, 'installer_brivium');
@@ -553,8 +562,8 @@ abstract class Brivium_BriviumHelper_Installer
 		{
 			throw new XenForo_Exception("Invalid installer '$class' specified");
 		}
-	
+
 		return new $createClass;
 	}
-	
+
 }

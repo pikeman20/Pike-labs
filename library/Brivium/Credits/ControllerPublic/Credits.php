@@ -7,9 +7,11 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 		$limit = XenForo_Application::get('options')->BRC_memberPerTop;
 		$userModel = $this->_getUserModel();
 		$transactionModel = $this->_getTransactionModel();
+		$creditModel = $this->_getCreditModel();
 		$stastModel = $this->_getCreditStastModel();
 		$canViewStatistic = $stastModel->canViewCreditStatistics();
-		if(!$this->_getCreditModel()->canViewRanking()){
+		$canViewRanking = $creditModel->canViewRanking();
+		if(!$canViewRanking && !$canViewStatistic){
 			return $this->responseRedirect(
 				XenForo_ControllerResponse_Redirect::SUCCESS,
 				XenForo_Link::buildPublicLink('credits/transactions')
@@ -24,45 +26,50 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 		if(empty($currency['currency_id'])){
 			return $this->responseError(new XenForo_Phrase('BRC_requested_currency_not_found'));
 		}
-
+		$currencyId = $currency['currency_id'];
 		$actionIds = $this->_input->filterSingle('action_id', XenForo_Input::STRING, array('array' => true));
+
+		$actionModel = $this->_getActionModel();
+		$actionObj = XenForo_Application::get('brcActionHandler');
+		$actions = $actionObj->getActions();
+		$action = array();
+		$events = $actionObj->getEvents();
+
+		foreach($currencies AS &$_currency){
+			$_currency['events'] = array();
+			foreach($events AS $event){
+				if(!empty($event[$_currency['currency_id']]) &&
+					!empty($event[$_currency['currency_id']]['title']) &&
+					!empty($event[$_currency['currency_id']]['action_id']) &&
+					!empty($event[$_currency['currency_id']]['active'])){
+					$_currency['events'][$event[$_currency['currency_id']]['action_id']] = $event[$_currency['currency_id']];
+				}
+			}
+		}
+
+		$actionId 	= '';
+		$currency = isset($currencies[$currencyId])?$currencies[$currencyId]:$currency;
+		if(!empty($actionIds[$currencyId])){
+			$actionId 	= $actionIds[$currencyId];
+			if(!empty($currency['events'][$actionId])){
+				$action = $currency['events'][$actionId];
+			}else{
+				return $this->responseError(new XenForo_Phrase('BRC_requested_action_not_found'));
+			}
+		}
+
+		$viewStatisticParams = array(
+			'action' 			=> 	$action,
+			'actionId' 			=> 	$actionId,
+			'actions' 			=> 	$actions
+		);
 		if($canViewStatistic){
-			$actionModel = $this->_getActionModel();
-			$actionObj = XenForo_Application::get('brcActionHandler');
-			$actions = $actionObj->getActions();
-			$action = array();
-			$events = $actionObj->getEvents();
-
-			foreach($currencies AS &$_currency){
-				$_currency['events'] = array();
-				foreach($events AS $event){
-					if(!empty($event[$_currency['currency_id']]) &&
-						!empty($event[$_currency['currency_id']]['title']) &&
-						!empty($event[$_currency['currency_id']]['action_id']) &&
-						!empty($event[$_currency['currency_id']]['active'])){
-						$_currency['events'][$event[$_currency['currency_id']]['action_id']] = $event[$_currency['currency_id']];
-					}
-				}
-			}
-
-			$actionId 	= '';
-			$currency = isset($currencies[$currencyId])?$currencies[$currencyId]:$currency;
-			if(!empty($actionIds[$currencyId])){
-				$actionId 	= $actionIds[$currencyId];
-				if(!empty($currency['events'][$actionId])){
-					$action = $currency['events'][$actionId];
-				}else{
-					return $this->responseError(new XenForo_Phrase('BRC_requested_action_not_found'));
-				}
-			}
-			$creditModel = $this->_getCreditModel();
 			$totalCredits 	= $creditModel->totalCredits($currency['column']);
 
 			$conditions  = array('currency_id' => $currencyId);
 			$statisticRecord = $stastModel->getStatisticRecord($actionId, $currencyId);
 			$firstDay = $stastModel->getFirstStatisticDate($actionId, $currencyId);
 			$todayStatisticRecord = $stastModel->getStatisticRecord($actionId, $currencyId,'daily');
-
 
 			$earnedPerday = 0;
 			$spentPerday = 0;
@@ -94,23 +101,26 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 			);
 		}
 
-		$criteria = array(
-			'user_state' => 'valid',
-			'is_banned' => 0
-		);
+		$richest = array();
+		$poorest = array();
+		if($canViewRanking){
+			$criteria = array(
+				'user_state' => 'valid',
+				'is_banned' => 0
+			);
 
-		$fetchOptions = array(
-			'limit' => $limit,
-			'order' => $currency['column'],
-		);
-		// richest user
-		$fetchOptions['direction'] = 'desc';
-		$richest = $userModel->getUsers($criteria, $fetchOptions);
+			$fetchOptions = array(
+				'limit' => $limit,
+				'order' => $currency['column'],
+			);
+			// richest user
+			$fetchOptions['direction'] = 'desc';
+			$richest = $userModel->getUsers($criteria, $fetchOptions);
 
-		// poorest user
-		$fetchOptions['direction'] = 'asc';
-		$poorest = $userModel->getUsers($criteria, $fetchOptions);
-
+			// poorest user
+			$fetchOptions['direction'] = 'asc';
+			$poorest = $userModel->getUsers($criteria, $fetchOptions);
+		}
 
 		$boardTotals = $this->getModelFromCache('XenForo_Model_DataRegistry')->get('boardTotals');
 		if (!$boardTotals)
@@ -120,6 +130,7 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 		$totalUsers 	= $boardTotals['users'];
 		$viewParams = array_merge($viewStatisticParams,array(
 
+			'canViewRanking'  => $canViewRanking,
 			'canViewStatistic'  => $canViewStatistic,
 			'totalUsers'   		=> $totalUsers,
 
@@ -154,8 +165,7 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 			'canPurchaseCredits'=> $canPurchaseCredits,
 			'canWithdraw' => $actionObj->canTriggerActionEvents('withdraw'),
 			'canViewRanking' => $creditModel->canViewRanking(),
-			'canViewOtherTransactions' => $creditModel->canStealCredits(),
-			'canViewRanking' => $this->_getTransactionModel()->canViewOtherTransactions(),
+			'canViewOtherTransactions' => $this->_getTransactionModel()->canViewOtherTransactions(),
 		);
 
 		return $this->responseView(
@@ -230,6 +240,8 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 	public function actionTransactions()
 	{
 		$transactionModel = $this->_getTransactionModel();
+		$creditModel = $this->_getCreditModel();
+
 		$page = max(1, $this->_input->filterSingle('page', XenForo_Input::UINT));
 		$options = XenForo_Application::get('options');
 		$perPage = $options->BRC_transactionsPerPage;
@@ -240,7 +252,7 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 		$visitor = XenForo_Visitor::getInstance();
 
 		$export = false;
-		$canExport = $this->_getCreditModel()->canExportTransaction($visitor->toArray());
+		$canExport = $creditModel->canExportTransaction($visitor->toArray());
 		if ($this->_input->inRequest('export') && $canExport)
 		{
 			$export = true;
@@ -370,6 +382,7 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 			'order' => $order,
 			'orderDirection' => $orderDirection,
 			'orderDirectionEx' => $orderDirectionEx,
+			'canViewSensitiveData' => 	$creditModel->canViewSensitiveData(),
 		);
 		return $this->_getWrapper(
 			'credits', 'transactions',
@@ -384,6 +397,8 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 	public function actionAllTransactions()
 	{
 		$transactionModel = $this->_getTransactionModel();
+		$creditModel = $this->_getCreditModel();
+
 		$canViewOtherTransactions = $transactionModel->canViewOtherTransactions();
 		if(!$canViewOtherTransactions){
 			return $this->responseError(new XenForo_Phrase('do_not_have_permission'));
@@ -496,7 +511,8 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 			'pageParams' => $pageParams,
 			'totalTransactions' =>	$transactionModel->countTransactions($conditions),
 			'transactionStartOffset' => ($page - 1) * $perPage + 1,
-			'transactionEndOffset' => ($page - 1) * $perPage + count($transactions) ,
+			'transactionEndOffset' => ($page - 1) * $perPage + count($transactions),
+			'canViewSensitiveData' => 	$creditModel->canViewSensitiveData(),
 			'pagenavLink' => 'credits/all-transactions',
 		);
 		return $this->responseView(
@@ -510,6 +526,8 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 	{
 		$transactionId = $this->_input->filterSingle('transaction_id', XenForo_Input::UINT);
 		$transactionModel = $this->_getTransactionModel();
+		$creditModel = $this->_getCreditModel();
+
 		$fetchOptions = array(
 			'join' =>  Brivium_Credits_Model_Transaction::FETCH_TRANSACTION_FULL
 		);
@@ -520,6 +538,7 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 		}
 		$viewParams = array(
 			'transaction' => $transactionModel->prepareTransaction($transaction),
+			'canViewSensitiveData' => 	$creditModel->canViewSensitiveData(),
 		);
 
 		return $this->responseView('Brivium_Credits_ViewAdmin_Credits_View', 'BRC_transaction_view', $viewParams);
@@ -625,7 +644,7 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 				'amount' 			=>	$userActionTaxedAmount,
 				'message' 			=>	$data['anonymous']?(new XenForo_Phrase('BRC_anonymous_transfer') .': '. $data['comment']):$data['comment'],
 				'currency_id'		=>	$currency['currency_id'],
-				'ignoreInclude' 	=>	true,
+				'ignore_include' 	=>	true,
 				'user'				=>	$receiver,
 				'extraData' 		=>	array('type'	=>	'receiver', 'anonymous'	=>	$data['anonymous'])
 			);
@@ -653,6 +672,7 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 		if(!$currencies || count($currencies) < 2){
 			return $this->responseError(new XenForo_Phrase('do_not_have_permission'));
 		}
+
 		$fromCurrencies = array();
 		$toCurrencies = array();
 		foreach($currencies AS $currency){
@@ -758,7 +778,7 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 			'user'				=>	$visitor,
 			'currency_id'		=>	$currencyTo['currency_id'],
 			//'message' 		=>	$data['comment'],
-			'ignoreInclude' 	=>	true,
+			'ignore_include' 	=>	true,
 			'extraData' 		=>	array(
 									'type'	=>	'receiver',
 									'currency'	=>	$currencyFrom
@@ -777,6 +797,58 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 		);
 	}
 
+
+	public function actionGetExchangeAmount()
+	{
+		$options = XenForo_Application::get('options');
+		$data = $this->_input->filter(array(
+			'amount' => XenForo_Input::UNUM,
+			'from' => XenForo_Input::UINT,
+			'to' => XenForo_Input::UINT,
+		));
+		$amount = $this->_input->filterSingle('amount', XenForo_Input::UNUM);
+
+		$currenciesObj = XenForo_Application::get('brcCurrencies');
+		$creditModel = $this->_getCreditModel();
+		list($eventFrom, $currencyFrom) = $this->_getCreditHelper()->assertEventAndCurrencyValidAndViewable('exchange', $data['from']);
+		list($eventTo, $currencyTo) = $this->_getCreditHelper()->assertEventAndCurrencyValidAndViewable('exchange', $data['to']);
+
+		$visitor = XenForo_Visitor::getInstance()->toArray();
+
+		if (!$currencyFrom['out_bound'] || !$currencyFrom['active']) {
+			return $this->responseError(new XenForo_Phrase('BRC_you_cant_exchange_from_x',array('currency'=>$currencyTo['title'])));
+		}
+		if (!$currencyTo['in_bound'] || !$currencyTo['active']) {
+			return $this->responseError(new XenForo_Phrase('BRC_you_cant_exchange_to_x',array('currency'=>$currencyTo['title'])));
+		}
+		if ($data['amount'] <= 0) {
+			return $this->responseError(new XenForo_Phrase('BRC_not_valid_amount'));
+		}
+
+		list($userTax, $userActionTax) = $creditModel->processTax( $data['amount'],$eventFrom);
+		$userTaxedAmount = $data['amount'] + $userTax ;
+		$userActionTaxedAmount = $data['amount'] - $userActionTax;
+		$userCredit = $visitor[$currencyFrom['column']];
+		if ( ($userCredit - $userTaxedAmount) < 0) {
+			return $this->responseError(new XenForo_Phrase('BRC_not_enough_transfer',array('amount' => $currenciesObj->currencyFormat($userTaxedAmount,false,$currencyFrom['currency_id']))));
+		}
+
+		$userActionTaxedAmount = $userActionTaxedAmount*($currencyTo['value']/$currencyFrom['value']);
+		$amountPhrase = $currenciesObj->currencyFormat($userActionTaxedAmount, false, $currencyTo['currency_id']);
+
+		$losePhrase = $currenciesObj->currencyFormat($userTaxedAmount, false, $currencyFrom['currency_id']);
+
+		$viewParams = array(
+			'loseAmount' => $losePhrase,
+			'amount' => $amountPhrase,
+		);
+
+		return $this->responseView(
+			'Brivium_Credits_ViewPublic_Credits_GetAmountExchange',
+			'',
+			$viewParams
+		);
+	}
 	/*========================= WithDraw ================================*/
 	public function actionWithDraw()
 	{
@@ -822,6 +894,7 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 			'currency_id' => XenForo_Input::UINT,
 			'comment' => XenForo_Input::STRING,
 			'redirect' => XenForo_Input::STRING,
+			'sensitive_data' => XenForo_Input::STRING,
 		));
 		$redirect = ($data['redirect'] ? $data['redirect'] : $this->getDynamicRedirect());
 
@@ -866,6 +939,7 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 			'message' 			=>	$data['comment'],
 			'moderate' 			=>	true,
 			'updateUser' 		=>	true,
+			'extraData' 		=>	array('sensitive_data'=>$data['sensitive_data']),
 		);
 		$errorString = '';
 		$creditModel->setIsWaitSubmit(true);
@@ -912,7 +986,7 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 
 	public function actionStealCredits()
 	{
-		if ($this->isConfirmedPost()) // delete add-on
+		if ($this->isConfirmedPost())
 		{
 			$this->_assertPostOnly();
 			$data = $this->_input->filter(array(
@@ -969,7 +1043,7 @@ class Brivium_Credits_ControllerPublic_Credits extends XenForo_ControllerPublic_
 				'amount' 			=>	$data['amount'],
 				'message' 			=>	$data['anonymous']?(new XenForo_Phrase('BRC_anonymous') .': '. $data['comment']):$data['comment'],
 				'currency_id'		=>	$currency['currency_id'],
-				'ignoreInclude' 	=>	true,
+				'ignore_include' 	=>	true,
 				'user'				=>	$visitor,
 				'extraData' 		=>	array('type' =>	'thief', 'anonymous'	=>	$data['anonymous'])
 			);

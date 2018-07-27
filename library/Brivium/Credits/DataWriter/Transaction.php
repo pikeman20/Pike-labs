@@ -18,6 +18,7 @@ class Brivium_Credits_DataWriter_Transaction extends XenForo_DataWriter
 		return array(
 			'xf_brivium_credits_transaction' => array(
 				'transaction_id'	=> array('type' => self::TYPE_UINT, 'autoIncrement' => true),
+				'transaction_key'	=> array('type' => self::TYPE_STRING, 'maxLength' => 50, 'default' => ''),
 				'action_id'			=> array('type' => self::TYPE_STRING, 'required' => true, 'maxLength' => 100),
 				'event_id'			=> array('type' => self::TYPE_UINT, 'required' => true),
 				'currency_id'		=> array('type' => self::TYPE_UINT, 'required' => true),
@@ -31,6 +32,7 @@ class Brivium_Credits_DataWriter_Transaction extends XenForo_DataWriter
 				'amount'			=> array('type' => self::TYPE_FLOAT, 'default' => 0),
 				'negate'			=> array('type' => self::TYPE_UINT, 'default' => 0),
 				'message'			=> array('type' => self::TYPE_STRING, 'default' => ''),
+				'sensitive_data'	=> array('type' => self::TYPE_STRING, 'default' => ''),
 				'moderate'			=> array('type' => self::TYPE_UINT, 'default' => 0),
 				'is_revert'			=> array('type' => self::TYPE_UINT, 'default' => 0),
 				'transaction_state'	=> array('type' => self::TYPE_STRING, 'maxLength' => 30),
@@ -121,7 +123,7 @@ class Brivium_Credits_DataWriter_Transaction extends XenForo_DataWriter
 	 */
 	protected function _postDelete()
 	{
-		if(XenForo_Application::getOptions()->BRC_returnCreditDeleteTransaction && (!$this->isChanged('moderate') || ($this->get('amount') < 0))){
+		if(XenForo_Application::getOptions()->BRC_returnCreditDeleteTransaction &&  ((!$this->get('moderate') && $this->get('amount') > 0) || $this->get('amount') < 0)){
 			$amount  	= $this->get('amount')*(-1);
 			$userId 	= $this->get('user_id');
 			if($userId){
@@ -131,7 +133,14 @@ class Brivium_Credits_DataWriter_Transaction extends XenForo_DataWriter
 				);
 
 				$this->getModelFromCache('Brivium_Credits_Model_Credit')->_updateUserCredits($update);
-				$this->getModelFromCache('Brivium_Credits_Model_CreditStast')->updateTransactionCreditStasts($this->get('action_id'), $this->get('currency_id'), $this->get('transaction_id'), $this->get("amount"), $this->get("transaction_date"));
+				if($this->get("amount") > 0){
+					$spend = 0;
+					$earn = $this->get("amount");
+				}else{
+					$earn = 0;
+					$spend = $this->get("amount");
+				}
+				$this->getModelFromCache('Brivium_Credits_Model_CreditStast')->updateTransactionCreditStasts($this->get('action_id'), $this->get('currency_id'), $earn, $spend, $this->get("transaction_date"));
 			}
 		}
 		$this->getModelFromCache('XenForo_Model_Alert')->deleteAlerts('credit', $this->get('event_id'));
